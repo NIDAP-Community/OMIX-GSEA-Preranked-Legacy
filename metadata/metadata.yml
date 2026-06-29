@@ -1,0 +1,9 @@
+metadata_version: 1
+name: OMIX GSEA
+description: Gene Set Enrichment Analysis (GSEA) for ranked gene lists
+tags:
+- GSEA
+- enrichment
+- gene-sets
+- bioinformatics
+- R

@@ -1,0 +1,97 @@
+#!/usr/bin/env Rscript
+
+# OMIX GSEA - CLI-first Gene Set Enrichment Analysis
+# Accepts parameters via command-line arguments from App Panel
+
+suppressPackageStartupMessages({
+  library(optparse)
+})
+
+# Source the GSEA function
+source("functions/GSEA_Preranked.R")
+
+# Define CLI options
+option_list <- list(
+  make_option("--deg_table", type = "character", default = "/data/deg_table/var_DEGAnalysis.rds", help = "Path to DEG table (TSV/CSV/RDS)"),
+  make_option("--pathways_database", type = "character", default = "/data/msigdb/var_GSEA_MSigDB_v2023_2_CCBR_.rds", help = "Path to pathways database (TSV/CSV/RDS)"),
+  make_option("--gene_names_column", type = "character", default = "Gene", help = "Gene name column in DEG table"),
+  make_option("--species", type = "character", default = "Human", help = "Species in DEG table"),
+  make_option("--gene_scores_suffix", type = "character", default = "_tstat", help = "Suffix for gene score columns"),
+  make_option("--pathways_species", type = "character", default = "Human", help = "Species in pathways database"),
+  make_option("--collections", type = "character", default = "H: hallmark gene sets,CP:REACTOME: Reactome gene sets", help = "Comma-separated collections"),
+  make_option("--min_geneset_size", type = "integer", default = 15L, help = "Minimum geneset size"),
+  make_option("--max_geneset_size", type = "integer", default = 500L, help = "Maximum geneset size"),
+  make_option("--n_permutations", type = "integer", default = 5000L, help = "Number of permutations"),
+  make_option("--random_seed", type = "integer", default = 246642L, help = "Random seed"),
+  make_option("--fdr_mode", type = "character", default = "within each collection", help = "FDR correction mode"),
+  make_option("--collapse_redundancy", type = "character", default = "false", help = "Collapse pathway redundancy"),
+  make_option("--sort_by", type = "character", default = "pval", help = "Sort output by"),
+  make_option("--image_width", type = "integer", default = 2500L, help = "Image width in pixels"),
+  make_option("--image_height", type = "integer", default = 2500L, help = "Image height in pixels"),
+  make_option("--image_resolution", type = "integer", default = 300L, help = "Image resolution (dpi)")
+)
+
+parser <- OptionParser(
+  usage = "Usage: %prog --deg_table PATH --pathways_database PATH [options]",
+  option_list = option_list,
+  description = "Run GSEA pre-ranked analysis on gene expression data"
+)
+
+opt <- parse_args(parser, args = commandArgs(trailingOnly = TRUE))
+
+# Validate inputs exist
+if (!file.exists(opt$deg_table)) {
+  stop("ERROR: DEG table file not found: ", opt$deg_table)
+}
+if (!file.exists(opt$pathways_database)) {
+  stop("ERROR: Pathways database file not found: ", opt$pathways_database)
+}
+
+# Parse comma-separated collections
+collections <- trimws(strsplit(opt$collections, ",")[[1]])
+
+# Convert string booleans
+collapse_redundancy <- tolower(opt$collapse_redundancy) == "true"
+
+# Results directory
+results_dir <- "/results"
+dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
+
+message("========================================")
+message("OMIX GSEA - Pre-ranked Analysis")
+message("========================================")
+message("DEG Table: ", opt$deg_table)
+message("Pathways Database: ", opt$pathways_database)
+message("Species: ", opt$species)
+message("Collections: ", paste(collections, collapse = ", "))
+message("========================================\n")
+
+# Run GSEA
+results <- GSEA_Preranked(
+  DEG_Table = opt$deg_table,
+  Pathways_Database = opt$pathways_database,
+  Gene_Names_Column = opt$gene_names_column,
+  species = opt$species,
+  Gene_Scores_Column_s_Suffix = opt$gene_scores_suffix,
+  Pathways_Database_Species = opt$pathways_species,
+  Collections_to_Include = collections,
+  Minimum_Gene_Set_Size = opt$min_geneset_size,
+  Maximum_Gene_Set_Size = opt$max_geneset_size,
+  FDR_Correction_Mode = opt$fdr_mode,
+  Number_of_Permutations = opt$n_permutations,
+  Random_Seed = opt$random_seed,
+  Collapse_Pathway_Redundancy = collapse_redundancy,
+  Sort_Output_By = opt$sort_by,
+  Image_Width = opt$image_width,
+  Image_Height = opt$image_height,
+  Image_Resolution = opt$image_resolution
+)
+
+# Save results
+output_file <- file.path(results_dir, "gsea_results.csv")
+write.csv(results, output_file, row.names = FALSE)
+
+message("\n========================================")
+message("✓ GSEA analysis complete!")
+message("Results saved to: ", output_file)
+message("========================================")

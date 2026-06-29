@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# OMIX GSEA - Reproducible Run entrypoint
+# Passes all parameters to main.R
+
+cd /code
+Rscript main.R "$@"

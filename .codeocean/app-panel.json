@@ -1,0 +1,193 @@
+{
+	"version": 1,
+	"named_parameters": true,
+	"general": {
+		"title": "OMIX GSEA - Pre-ranked Gene Set Enrichment Analysis",
+		"instructions": "Performs Gene Set Enrichment Analysis (GSEA) on pre-ranked gene lists using fgsea. Evaluates if gene sets are significantly enriched at either end of a ranking (e.g., fold-change, t-statistic).\n\n**Required Inputs:**\n• DEG Table with gene scores\n• MSigDB or custom pathways database\n\n**Outputs:**\n• Enrichment results (NES, p-value, FDR)\n• Leading edge genes for each pathway"
+	},
+	"datasets": [
+		{
+			"id": "28035d52-03e6-4761-8f50-72d48af496d1",
+			"name": "DEG Table",
+			"description": "Dataset with genes and ranking scores (e.g., t-statistic, log fold-change). Must contain a gene name column and score columns for each contrast."
+		},
+		{
+			"id": "eb51e72e-bcb9-400d-bf94-fc8cad85c7f1",
+			"name": "Pathways Database",
+			"description": "Gene set database (e.g., MSigDB v2023.2). Must have columns: collection, gene_set_name, gene_symbol, species."
+		}
+	],
+	"parameters": [
+		{
+			"id": "hd5CP5yjVJ1azrb2",
+			"name": "Gene Names Column",
+			"param_name": "gene_names_column",
+			"help_text": "Column name containing gene symbols in the DEG table",
+			"type": "text",
+			"value_type": "string",
+			"default_value": "Gene"
+		},
+		{
+			"id": "7gOLsdim1E7WncQ0",
+			"name": "Species",
+			"param_name": "species",
+			"help_text": "Species for gene annotations in the DEG table",
+			"type": "list",
+			"value_type": "string",
+			"default_value": "Human",
+			"extra_data": [
+				"Human",
+				"Mouse",
+				"Rat",
+				"Dog",
+				"Rabbit",
+				"Zebrafish",
+				"Drosophila",
+				"Chimpanzee",
+				"Macaque"
+			]
+		},
+		{
+			"id": "vDDOqF8ScHosUyfw",
+			"name": "Gene Score Suffix",
+			"param_name": "gene_scores_suffix",
+			"help_text": "Suffix in column names containing gene ranking scores",
+			"type": "list",
+			"value_type": "string",
+			"default_value": "_tstat",
+			"extra_data": [
+				"_tstat",
+				"_logFC"
+			]
+		},
+		{
+			"id": "o8Ilqr1LnEsHFCzM",
+			"name": "Pathways Species",
+			"param_name": "pathways_species",
+			"help_text": "Species in the pathways database",
+			"type": "list",
+			"value_type": "string",
+			"default_value": "Human",
+			"extra_data": [
+				"Human",
+				"Mouse"
+			]
+		},
+		{
+			"id": "lvOETYqKeoTBPpNg",
+			"name": "Collections",
+			"param_name": "collections",
+			"help_text": "Comma-separated MSigDB collections (e.g., 'H: hallmark gene sets,C2:CP:KEGG_LEGACY: KEGG Legacy gene sets'). See output log for available collections.",
+			"type": "text",
+			"value_type": "string",
+			"default_value": "H: hallmark gene sets,C2:CP:REACTOME: Reactome gene sets"
+		},
+		{
+			"id": "u0acCwMQKZ8FyocM",
+			"name": "Min Geneset Size",
+			"param_name": "min_geneset_size",
+			"help_text": "Minimum number of genes in a gene set to include",
+			"type": "text",
+			"value_type": "number",
+			"default_value": "15"
+		},
+		{
+			"id": "kdY2erOvTmYr6nQ0",
+			"name": "Max Geneset Size",
+			"param_name": "max_geneset_size",
+			"help_text": "Maximum number of genes in a gene set to include",
+			"type": "text",
+			"value_type": "number",
+			"default_value": "500"
+		},
+		{
+			"id": "1xTUwD80w5qvUW4P",
+			"name": "Number of Permutations",
+			"param_name": "n_permutations",
+			"help_text": "Number of permutations for p-value calculation (higher = more accurate but slower)",
+			"type": "text",
+			"value_type": "number",
+			"default_value": "5000"
+		},
+		{
+			"id": "87HOriTUIxt67xbJ",
+			"name": "Random Seed",
+			"param_name": "random_seed",
+			"help_text": "Seed for reproducible permutation test",
+			"type": "text",
+			"value_type": "number",
+			"default_value": "246642"
+		},
+		{
+			"id": "Q8SoMqVYLuRkfA4J",
+			"name": "FDR Correction Mode",
+			"param_name": "fdr_mode",
+			"help_text": "How to apply FDR correction: within each collection separately or across all collections",
+			"type": "list",
+			"value_type": "string",
+			"default_value": "within each collection",
+			"extra_data": [
+				"within each collection",
+				"over all collections"
+			]
+		},
+		{
+			"id": "LV3qXhbrhGXWQzSG",
+			"name": "Collapse Redundancy",
+			"param_name": "collapse_redundancy",
+			"help_text": "Use fgsea's collapsePathways to reduce redundant pathways",
+			"type": "list",
+			"value_type": "string",
+			"default_value": "false",
+			"extra_data": [
+				"false",
+				"true"
+			]
+		},
+		{
+			"id": "1O8jYX18ZGcc4cBr",
+			"name": "Sort By",
+			"param_name": "sort_by",
+			"help_text": "Column to sort output results by",
+			"type": "list",
+			"value_type": "string",
+			"default_value": "pval",
+			"extra_data": [
+				"pval",
+				"padj",
+				"NES",
+				"ES",
+				"contrast",
+				"collection",
+				"pathway"
+			]
+		},
+		{
+			"id": "fPPFTG3K49OKtRg4",
+			"name": "Image Width (pixels)",
+			"param_name": "image_width",
+			"help_text": "Width of output plots in pixels",
+			"type": "text",
+			"value_type": "number",
+			"default_value": "2500"
+		},
+		{
+			"id": "zitZqGB3jL6BRNal",
+			"name": "Image Height (pixels)",
+			"param_name": "image_height",
+			"help_text": "Height of output plots in pixels",
+			"type": "text",
+			"value_type": "number",
+			"default_value": "2500"
+		},
+		{
+			"id": "x1FIhMO5pfQk4O2E",
+			"name": "Image Resolution (dpi)",
+			"param_name": "image_resolution",
+			"help_text": "Resolution for output plots",
+			"type": "text",
+			"value_type": "number",
+			"default_value": "300"
+		}
+	]
+}

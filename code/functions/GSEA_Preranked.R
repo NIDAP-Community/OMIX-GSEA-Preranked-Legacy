@@ -149,18 +149,6 @@ GSEA_Preranked <- function(
   ## --------- ##
 
   options(warn = Display_Warnings)
-  library(data.table)
-  library(dplyr)
-  library(fgsea)
-  library(ggplot2)
-  library(grid)
-  library(gridExtra)
-  library(gtable)
-  library(l2psupp)
-  library(patchwork)
-  library(tibble)
-  library(stats)
-
   read_input_table <- function(x, label) {
     if (is.data.frame(x)) {
       return(x)
@@ -204,6 +192,117 @@ GSEA_Preranked <- function(
       label
     ))
   }
+
+  normalize_species_label <- function(x, label, default = NULL) {
+    if (
+      is.null(x) ||
+        length(x) == 0 ||
+        is.na(x[[1]]) ||
+        !nzchar(trimws(as.character(x[[1]])))
+    ) {
+      if (!is.null(default)) {
+        return(default)
+      }
+      stop(sprintf("ERROR: `%s` must be specified", label))
+    }
+
+    species_lookup <- c(
+      dog = "Dog",
+      drosophila = "Drosophila",
+      chimpanzee = "Chimpanzee",
+      human = "Human",
+      macaque = "Macaque",
+      mouse = "Mouse",
+      rabbit = "Rabbit",
+      rat = "Rat",
+      zebrafish = "Zebrafish"
+    )
+    species_key <- tolower(trimws(as.character(x[[1]])))
+
+    if (!species_key %in% names(species_lookup)) {
+      stop(sprintf(
+        "ERROR: `%s` must be one of: %s",
+        label,
+        paste(unname(species_lookup), collapse = ", ")
+      ))
+    }
+
+    unname(species_lookup[[species_key]])
+  }
+
+  check_gene_species_case <- function(deg_table, gene_column, species) {
+    if (!gene_column %in% colnames(deg_table)) {
+      stop(sprintf(
+        "ERROR: Gene_Names_Column `%s` was not found in DEG_Table",
+        gene_column
+      ))
+    }
+
+    genes <- unique(trimws(as.character(deg_table[[gene_column]])))
+    genes <- genes[!is.na(genes) & nzchar(genes)]
+    genes <- genes[grepl("[A-Za-z]", genes)]
+
+    if (length(genes) < 10) {
+      return(invisible(NULL))
+    }
+
+    letters_only <- gsub("[^A-Za-z]", "", genes)
+    enough_letters <- nchar(letters_only) >= 2
+    genes <- genes[enough_letters]
+    letters_only <- letters_only[enough_letters]
+
+    if (length(genes) < 10) {
+      return(invisible(NULL))
+    }
+
+    human_like <- letters_only == toupper(letters_only)
+    mouse_like <- grepl("^[A-Z][a-z]", genes) |
+      grepl("^mt-", genes) |
+      grepl("[A-Za-z][0-9-]*[a-z]", genes)
+
+    mouse_fraction <- mean(mouse_like)
+    human_fraction <- mean(human_like)
+    min_count <- min(20, ceiling(length(genes) * 0.5))
+
+    if (
+      species == "Human" &&
+        sum(mouse_like) >= min_count &&
+        mouse_fraction >= 0.50 &&
+        mouse_fraction > human_fraction
+    ) {
+      examples <- paste(utils::head(genes[mouse_like], 8), collapse = ", ")
+      stop(sprintf(
+        paste0(
+          "ERROR: Mouse appears to be the correct species for this ",
+          "DEG_Table, but `species` is set to Human. Gene symbols in `%s` ",
+          "look mouse-like because they contain lowercase letters ",
+          "(examples: %s). Rerun with `species = \"Mouse\"`."
+        ),
+        gene_column,
+        examples
+      ))
+    }
+
+    if (
+      species == "Mouse" &&
+        sum(human_like) >= min_count &&
+        human_fraction >= 0.80
+    ) {
+      examples <- paste(utils::head(genes[human_like], 8), collapse = ", ")
+      stop(sprintf(
+        paste0(
+          "ERROR: Human appears to be the correct species for this ",
+          "DEG_Table, but `species` is set to Mouse. Gene symbols in `%s` ",
+          "look human-like because they are mostly all caps ",
+          "(examples: %s). Rerun with `species = \"Human\"`."
+        ),
+        gene_column,
+        examples
+      ))
+    }
+
+    invisible(NULL)
+  }
   ## -------------------------------- ##
   ## User-Defined Template Parameters ##
   ## -------------------------------- ##
@@ -214,6 +313,7 @@ GSEA_Preranked <- function(
     Pathways_Database,
     "Pathways_Database"
   )
+  species <- normalize_species_label(species, "species", default = "Human")
 
   # DEG Table Parameters
   gene_scores_column_s_suffix <- Gene_Scores_Column_s_Suffix
@@ -225,6 +325,10 @@ GSEA_Preranked <- function(
   } else {
     Pathways_Database_Species
   }
+  collection_species <- normalize_species_label(
+    collection_species,
+    "Pathways_Database_Species"
+  )
 
   # GSEA parameters
   number_of_processing_units <- 0
@@ -238,10 +342,14 @@ GSEA_Preranked <- function(
 
   # identify available species in pathways_database and stop if not not found
   # with collection_species; list in the log available ones
-  available_species <- pathways_database %>%
-    dplyr::select(species) %>%
-    dplyr::distinct() %>%
-    dplyr::pull(species)
+  if (!"species" %in% colnames(pathways_database)) {
+    stop("ERROR: Pathways_Database must contain a `species` column")
+  }
+  if (!"collection" %in% colnames(pathways_database)) {
+    stop("ERROR: Pathways_Database must contain a `collection` column")
+  }
+
+  available_species <- unique(pathways_database[["species"]])
 
   if (!collection_species %in% available_species) {
     stop(sprintf(
@@ -256,11 +364,12 @@ GSEA_Preranked <- function(
 
   # stop if collections_to_include are not all found in pathways_database;
   # list in the log not found and available ones
-  available_collections <- pathways_database %>%
-    dplyr::filter(species == collection_species) %>%
-    dplyr::select(collection) %>%
-    dplyr::distinct() %>%
-    dplyr::pull(collection)
+  available_collections <- unique(
+    pathways_database[pathways_database[["species"]] == collection_species,
+      "collection",
+      drop = TRUE
+    ]
+  )
 
   if (!any(Collections_to_Include %in% available_collections)) {
     stop(sprintf(
@@ -286,6 +395,24 @@ GSEA_Preranked <- function(
       paste(available_collections, collapse = "\n")
     ))
   }
+
+  check_gene_species_case(deg_table, Gene_Names_Column, species)
+
+  ## --------- ##
+  ## Libraries ##
+  ## --------- ##
+
+  library(data.table)
+  library(dplyr)
+  library(fgsea)
+  library(ggplot2)
+  library(grid)
+  library(gridExtra)
+  library(gtable)
+  library(l2psupp)
+  library(patchwork)
+  library(tibble)
+  library(stats)
 
   ## --------- ##
   ## Functions ##
@@ -325,10 +452,6 @@ GSEA_Preranked <- function(
             nproc = Np
           )
         gsea$size_leadingEdge <- sapply(gsea$leadingEdge, length)
-        # Fix: fgsea sometimes returns NULL/NA in size column
-        # Calculate size manually from pathway membership
-        pathway_sizes <- sapply(collections[names(collections) %in% gsea$pathway], length)
-        gsea$size <- as.numeric(pathway_sizes[gsea$pathway])
         gsea$fraction_leadingEdge <- gsea$size_leadingEdge / gsea$size
         gsea$leadingEdge <-
           sapply(gsea$leadingEdge, function(x) {
@@ -359,12 +482,6 @@ GSEA_Preranked <- function(
           )
           gsea_collection$size_leadingEdge <-
             sapply(gsea_collection$leadingEdge, length)
-          # Fix: fgsea sometimes returns NULL/NA in size column
-          # Calculate size manually from pathway membership
-          pathway_sizes <- sapply(collections[
-            names(collections) %in% gsea_collection$pathway
-          ], length)
-          gsea_collection$size <- as.numeric(pathway_sizes[gsea_collection$pathway])
           gsea_collection$fraction_leadingEdge <-
             gsea_collection$size_leadingEdge / gsea_collection$size
           gsea_collection$leadingEdge <-
@@ -1104,14 +1221,4 @@ GSEA_Preranked <- function(
   return(gsea)
 }
 
-## ---------------------------- ##
-## Global Imports and Functions ##
-## ---------------------------- ##
-
-## Functions defined here will be available to call in
-## the code for any table.
-
-## --------------- ##
-## End of Template ##
-## --------------- ##
 

@@ -3,7 +3,7 @@
 	"named_parameters": true,
 	"general": {
 		"title": "OMIX GSEA - Pre-ranked Gene Set Enrichment Analysis",
-		"instructions": "START HERE: Upload your DEG file using the 'DEG Table File (Upload)' parameter below, OR select the example DEG Table from the Data section. Configure Basic Settings and run enrichment analysis.\n\nGSEA evaluates if gene sets are significantly enriched at either end of a ranked gene list (e.g., fold-change, t-statistic). Outputs include enrichment statistics (NES, p-value, FDR) and leading edge genes for each pathway.\n\nSee README for complete list of available MSigDB collections for Human and Mouse."
+		"instructions": "START HERE: Upload your DEG file using the 'DEG Table File (Upload)' parameter below, OR select the example DEG Table from the Data section. Configure Basic Settings and run enrichment analysis.\n\nGSEA evaluates if gene sets are significantly enriched at either end of a ranked gene list (e.g., fold-change, t-statistic). Outputs include enrichment statistics (NES, p-value, FDR) and leading edge genes for each pathway.\n\nNote: Use Human collections (H/C prefix) for all species - the tool automatically maps genes to human orthologs. See README for complete collection list."
 	},
 	"datasets": [
 		{
@@ -62,10 +62,10 @@
 			"category": "basic",
 			"name": "Species",
 			"param_name": "species",
-			"help_text": "Species for gene annotations in the DEG table",
+			"help_text": "Species for gene annotations in your input DEG table. Non-human genes are automatically converted to human orthologs for pathway analysis.",
 			"type": "list",
 			"value_type": "string",
-			"default_value": "Human",
+			"default_value": "Mouse",
 			"extra_data": [
 				"Human",
 				"Mouse",
@@ -97,7 +97,7 @@
 			"category": "basic",
 			"name": "Pathways Species",
 			"param_name": "pathways_species",
-			"help_text": "Species in the pathways database. Use 'Human' for H/C collections, 'Mouse' for M collections. See README for details.",
+			"help_text": "Species in the pathways database. Recommended: Keep as 'Human' for H/C collections - non-human input genes are automatically mapped to human orthologs. Use 'Mouse' only for M-prefix collections.",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "Human",
@@ -111,10 +111,10 @@
 			"category": "basic",
 			"name": "Collections",
 			"param_name": "collections",
-			"help_text": "Comma-separated MSigDB collection names. Examples: 'H: hallmark gene sets' or 'H: hallmark gene sets,C2:CP:REACTOME: Reactome gene sets'. See README for complete list of Human (H/C) and Mouse (M) collections.",
+			"help_text": "Comma-separated MSigDB collection names. Recommended: Use Human collections (H/C prefix) regardless of input species. Examples: 'H: hallmark gene sets' or 'H: hallmark gene sets,C2:CP:REACTOME: Reactome gene sets'. See README for complete list.",
 			"type": "text",
 			"value_type": "string",
-			"default_value": "H: hallmark gene sets"
+			"default_value": "H: hallmark gene sets,C2:CP:REACTOME: Reactome gene sets"
 		},
 		{
 			"id": "u0acCwMQKZ8FyocM",

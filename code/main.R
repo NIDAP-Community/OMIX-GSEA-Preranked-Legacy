@@ -12,7 +12,7 @@ source("functions/GSEA_Preranked.R")
 
 # Define CLI options
 option_list <- list(
-  make_option("--deg_table", type = "character", default = "/data/deg_table/var_DEGAnalysis.rds", help = "Path to DEG table (TSV/CSV/RDS)"),
+  make_option("--deg_table", type = "character", default = NULL, help = "Path to DEG table (TSV/CSV/RDS) - uploaded file or data asset"),
   make_option("--pathways_database", type = "character", default = "/data/msigdb/var_GSEA_MSigDB_v2023_2_CCBR_.rds", help = "Path to pathways database (TSV/CSV/RDS)"),
   make_option("--gene_names_column", type = "character", default = "Gene", help = "Gene name column in DEG table"),
   make_option("--species", type = "character", default = "Human", help = "Species in DEG table"),
@@ -38,6 +38,13 @@ parser <- OptionParser(
 )
 
 opt <- parse_args(parser, args = commandArgs(trailingOnly = TRUE))
+
+# Handle DEG table input: uploaded file takes priority, fallback to data asset
+if (is.null(opt$deg_table) || opt$deg_table == "") {
+  # No file uploaded, use default data asset
+  opt$deg_table <- "/data/deg_table/var_DEGAnalysis.rds"
+  message("No DEG file uploaded. Using example data asset.")
+}
 
 # Validate inputs exist
 if (!file.exists(opt$deg_table)) {

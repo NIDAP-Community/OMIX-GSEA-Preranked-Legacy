@@ -3,23 +3,53 @@
 	"named_parameters": true,
 	"general": {
 		"title": "OMIX GSEA - Pre-ranked Gene Set Enrichment Analysis",
-		"instructions": "Performs Gene Set Enrichment Analysis (GSEA) on pre-ranked gene lists using fgsea. Evaluates if gene sets are significantly enriched at either end of a ranking (e.g., fold-change, t-statistic).\n\n**Required Inputs:**\n• DEG Table with gene scores\n• MSigDB or custom pathways database\n\n**Outputs:**\n• Enrichment results (NES, p-value, FDR)\n• Leading edge genes for each pathway"
+		"instructions": "START HERE: Upload your DEG file using the 'DEG Table File (Upload)' parameter below, OR select the example DEG Table from the Data section. Configure Basic Settings and run enrichment analysis.\n\nGSEA evaluates if gene sets are significantly enriched at either end of a ranked gene list (e.g., fold-change, t-statistic). Outputs include enrichment statistics (NES, p-value, FDR) and leading edge genes for each pathway.\n\nSee README for complete list of available MSigDB collections for Human and Mouse."
 	},
 	"datasets": [
 		{
 			"id": "28035d52-03e6-4761-8f50-72d48af496d1",
-			"name": "DEG Table",
-			"description": "Dataset with genes and ranking scores (e.g., t-statistic, log fold-change). Must contain a gene name column and score columns for each contrast."
+			"name": "DEG Table (Example)"
 		},
 		{
 			"id": "eb51e72e-bcb9-400d-bf94-fc8cad85c7f1",
-			"name": "Pathways Database",
-			"description": "Gene set database (e.g., MSigDB v2023.2). Must have columns: collection, gene_set_name, gene_symbol, species."
+			"name": "Pathways Database"
+		}
+	],
+	"categories": [
+		{
+			"id": "basic",
+			"name": "⭐ Basic Settings",
+			"help_text": "Essential parameters to configure before running analysis"
+		},
+		{
+			"id": "filters",
+			"name": "Gene Set Filters",
+			"help_text": "Filter gene sets by size to focus on relevant pathways"
+		},
+		{
+			"id": "stats",
+			"name": "Statistical Settings",
+			"help_text": "Control statistical testing and significance calculations"
+		},
+		{
+			"id": "output",
+			"name": "Output Options",
+			"help_text": "Customize result sorting and plot dimensions"
 		}
 	],
 	"parameters": [
 		{
+			"id": "deg_file_upload",
+			"category": "basic",
+			"name": "DEG Table File (Upload)",
+			"param_name": "deg_table",
+			"help_text": "Upload your differential expression results file (RDS/CSV/TSV). Must contain gene names and ranking column (t-statistic or log fold-change). If provided, overrides the example DEG Table data asset.",
+			"type": "file",
+			"value_type": "string"
+		},
+		{
 			"id": "hd5CP5yjVJ1azrb2",
+			"category": "basic",
 			"name": "Gene Names Column",
 			"param_name": "gene_names_column",
 			"help_text": "Column name containing gene symbols in the DEG table",
@@ -29,6 +59,7 @@
 		},
 		{
 			"id": "7gOLsdim1E7WncQ0",
+			"category": "basic",
 			"name": "Species",
 			"param_name": "species",
 			"help_text": "Species for gene annotations in the DEG table",
@@ -49,9 +80,10 @@
 		},
 		{
 			"id": "vDDOqF8ScHosUyfw",
+			"category": "basic",
 			"name": "Gene Score Suffix",
 			"param_name": "gene_scores_suffix",
-			"help_text": "Suffix in column names containing gene ranking scores",
+			"help_text": "Suffix in column names containing gene ranking scores (e.g., if you have 'TreatmentA_tstat' and 'TreatmentB_tstat' columns, use '_tstat')",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "_tstat",
@@ -62,9 +94,10 @@
 		},
 		{
 			"id": "o8Ilqr1LnEsHFCzM",
+			"category": "basic",
 			"name": "Pathways Species",
 			"param_name": "pathways_species",
-			"help_text": "Species in the pathways database",
+			"help_text": "Species in the pathways database. Use 'Human' for H/C collections, 'Mouse' for M collections. See README for details.",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "Human",
@@ -74,55 +107,64 @@
 			]
 		},
 		{
-			"id": "lvOETYqKeoTBPpNg",
+			"id": "lvOETYqKeoTBPPpNg",
+			"category": "basic",
 			"name": "Collections",
 			"param_name": "collections",
-			"help_text": "Comma-separated MSigDB collections (e.g., 'H: hallmark gene sets,C2:CP:KEGG_LEGACY: KEGG Legacy gene sets'). See output log for available collections.",
+			"help_text": "Comma-separated MSigDB collection names. Examples: 'H: hallmark gene sets' or 'H: hallmark gene sets,C2:CP:REACTOME: Reactome gene sets'. See README for complete list of Human (H/C) and Mouse (M) collections.",
 			"type": "text",
 			"value_type": "string",
-			"default_value": "H: hallmark gene sets,C2:CP:REACTOME: Reactome gene sets"
+			"default_value": "H: hallmark gene sets"
 		},
 		{
 			"id": "u0acCwMQKZ8FyocM",
+			"category": "filters",
 			"name": "Min Geneset Size",
 			"param_name": "min_geneset_size",
-			"help_text": "Minimum number of genes in a gene set to include",
+			"help_text": "Exclude gene sets with fewer than this many genes (smaller sets may be less reliable)",
 			"type": "text",
 			"value_type": "number",
-			"default_value": "15"
+			"default_value": "15",
+			"minimum": 1
 		},
 		{
 			"id": "kdY2erOvTmYr6nQ0",
+			"category": "filters",
 			"name": "Max Geneset Size",
 			"param_name": "max_geneset_size",
-			"help_text": "Maximum number of genes in a gene set to include",
+			"help_text": "Exclude gene sets with more than this many genes (very large sets often lack specificity)",
 			"type": "text",
 			"value_type": "number",
-			"default_value": "500"
+			"default_value": "500",
+			"minimum": 1
 		},
 		{
 			"id": "1xTUwD80w5qvUW4P",
+			"category": "stats",
 			"name": "Number of Permutations",
 			"param_name": "n_permutations",
-			"help_text": "Number of permutations for p-value calculation (higher = more accurate but slower)",
+			"help_text": "Number of permutations for p-value calculation. Higher = more accurate but slower (typical: 1000-10000)",
 			"type": "text",
 			"value_type": "number",
-			"default_value": "5000"
+			"default_value": "5000",
+			"minimum": 1000
 		},
 		{
 			"id": "87HOriTUIxt67xbJ",
+			"category": "stats",
 			"name": "Random Seed",
 			"param_name": "random_seed",
-			"help_text": "Seed for reproducible permutation test",
+			"help_text": "Seed for reproducible permutation test results",
 			"type": "text",
 			"value_type": "number",
 			"default_value": "246642"
 		},
 		{
 			"id": "Q8SoMqVYLuRkfA4J",
+			"category": "stats",
 			"name": "FDR Correction Mode",
 			"param_name": "fdr_mode",
-			"help_text": "How to apply FDR correction: within each collection separately or across all collections",
+			"help_text": "Apply FDR correction within each collection separately or across all collections together",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "within each collection",
@@ -133,9 +175,10 @@
 		},
 		{
 			"id": "LV3qXhbrhGXWQzSG",
+			"category": "stats",
 			"name": "Collapse Redundancy",
 			"param_name": "collapse_redundancy",
-			"help_text": "Use fgsea's collapsePathways to reduce redundant pathways",
+			"help_text": "Use fgsea's collapsePathways to reduce redundant pathways in results",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "false",
@@ -146,9 +189,10 @@
 		},
 		{
 			"id": "1O8jYX18ZGcc4cBr",
+			"category": "output",
 			"name": "Sort By",
 			"param_name": "sort_by",
-			"help_text": "Column to sort output results by",
+			"help_text": "Column to sort output results table by",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "pval",
@@ -164,30 +208,36 @@
 		},
 		{
 			"id": "fPPFTG3K49OKtRg4",
+			"category": "output",
 			"name": "Image Width (pixels)",
 			"param_name": "image_width",
 			"help_text": "Width of output plots in pixels",
 			"type": "text",
 			"value_type": "number",
-			"default_value": "2500"
+			"default_value": "2500",
+			"minimum": 500
 		},
 		{
 			"id": "zitZqGB3jL6BRNal",
+			"category": "output",
 			"name": "Image Height (pixels)",
 			"param_name": "image_height",
 			"help_text": "Height of output plots in pixels",
 			"type": "text",
 			"value_type": "number",
-			"default_value": "2500"
+			"default_value": "2500",
+			"minimum": 500
 		},
 		{
 			"id": "x1FIhMO5pfQk4O2E",
+			"category": "output",
 			"name": "Image Resolution (dpi)",
 			"param_name": "image_resolution",
-			"help_text": "Resolution for output plots",
+			"help_text": "Resolution for output plots (typical: 300 for publications, 150 for web)",
 			"type": "text",
 			"value_type": "number",
-			"default_value": "300"
+			"default_value": "300",
+			"minimum": 72
 		}
 	]
 }

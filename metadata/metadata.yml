@@ -6,6 +6,7 @@ description: Gene Set Enrichment Analysis (GSEA) for ranked gene lists using fgs
   Generates enrichment statistics, p-values with FDR correction, and leading-edge
   gene annotations. Accepts DEG tables with t-statistics or log fold-change rankings.
 tags:
+- OMIX
 - GSEA
 - enrichment
 - gene-sets

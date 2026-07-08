@@ -5,4 +5,10 @@ set -euo pipefail
 # Passes all parameters to main.R
 
 cd /code
+
+# Copy documentation guide to results if it exists
+if [ -f "OMIX_Documentation_Guide.md" ]; then
+  cp OMIX_Documentation_Guide.md /results/
+fi
+
 Rscript main.R "$@"

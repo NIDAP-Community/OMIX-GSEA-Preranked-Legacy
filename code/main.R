@@ -37,7 +37,25 @@ parser <- OptionParser(
   description = "Run GSEA pre-ranked analysis on gene expression data"
 )
 
-opt <- parse_args(parser, args = commandArgs(trailingOnly = TRUE))
+# Filter out empty string arguments before optparse sees them
+# Code Ocean passes --param "" for blank file uploads, which optparse rejects
+args <- commandArgs(trailingOnly = TRUE)
+filtered_args <- character()
+i <- 1
+while (i <= length(args)) {
+  # Skip standalone empty strings
+  if (args[i] == "") {
+    i <- i + 1
+  } else if (i < length(args) && startsWith(args[i], "--") && args[i+1] == "") {
+    # Skip flag + empty value pairs
+    i <- i + 2
+  } else {
+    filtered_args <- c(filtered_args, args[i])
+    i <- i + 1
+  }
+}
+
+opt <- parse_args(parser, args = filtered_args)
 
 # Handle DEG table input: uploaded file takes priority, fallback to data asset
 if (is.null(opt$deg_table) || opt$deg_table == "") {

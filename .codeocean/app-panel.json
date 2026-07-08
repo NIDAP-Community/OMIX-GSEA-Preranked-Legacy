@@ -3,16 +3,18 @@
 	"named_parameters": true,
 	"general": {
 		"title": "OMIX GSEA - Pre-ranked Gene Set Enrichment Analysis",
-		"instructions": "START HERE: Upload your DEG file using the 'DEG Table File (Upload)' parameter below, OR select the example DEG Table from the Data section. Configure Basic Settings and run enrichment analysis.\n\nGSEA evaluates if gene sets are significantly enriched at either end of a ranked gene list (e.g., fold-change, t-statistic). Outputs include enrichment statistics (NES, p-value, FDR) and leading edge genes for each pathway.\n\nNote: Use Human collections (H/C prefix) for all species - the tool automatically maps genes to human orthologs. See README for complete collection list."
+		"instructions": "START HERE:\n1. **Try with demo data**: Leave 'DEG Table File' blank to automatically use the attached Mouse RNA-seq demo dataset\n2. **Or upload your own**: Use the 'DEG Table File' parameter to upload your DEG results (RDS/CSV/TSV)\n3. Configure the 'Gene Score Suffix' to match your ranking columns (default: _tstat)\n4. Select pathway 'Collections' to test (default: Hallmark + REACTOME)\n5. Run the analysis\n\nGSEA evaluates whether gene sets are enriched at the top or bottom of your ranked gene list. Results include NES scores, p-values with FDR correction, and leading edge genes.\n\nAdvanced users can customize gene set filtering, statistical settings, and output options."
 	},
 	"datasets": [
 		{
 			"id": "28035d52-03e6-4761-8f50-72d48af496d1",
-			"name": "DEG Table (Example)"
+			"name": "Demo DEG Table",
+			"help_text": "Mouse RNA-seq demo data with ranking scores (t-statistics) for multiple comparisons. Used automatically if no file is uploaded."
 		},
 		{
 			"id": "eb51e72e-bcb9-400d-bf94-fc8cad85c7f1",
-			"name": "Pathways Database"
+			"name": "Pathways Database (MSigDB)",
+			"help_text": "MSigDB v2023.2 - Molecular Signatures Database with Hallmark, GO, REACTOME, KEGG, and other pathway collections."
 		}
 	],
 	"categories": [
@@ -41,9 +43,9 @@
 		{
 			"id": "deg_file_upload",
 			"category": "basic",
-			"name": "DEG Table File (Upload)",
+			"name": "DEG Table File",
 			"param_name": "deg_table",
-			"help_text": "Upload your differential expression results file (RDS/CSV/TSV). Must contain gene names and ranking column (t-statistic or log fold-change). If provided, overrides the example DEG Table data asset.",
+			"help_text": "Upload your differential expression results file (RDS/CSV/TSV). Leave blank to automatically use the attached demo dataset.",
 			"type": "file",
 			"value_type": "string"
 		},

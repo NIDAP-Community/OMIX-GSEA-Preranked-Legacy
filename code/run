@@ -7,8 +7,8 @@ set -euo pipefail
 cd /code
 
 # Copy documentation guide to results if it exists
-#if [ -f "OMIX_Documentation_Guide.md" ]; then
-#  cp OMIX_Documentation_Guide.md /results/
-#fi
+if [ -f "README.md" ]; then
+  cp GSEA_Legacy_READMEe.md /results/
+fi
 
 Rscript main.R "$@"

@@ -241,5 +241,12 @@
 			"default_value": "300",
 			"minimum": 72
 		}
+	],
+	"results": [
+		{
+			"file_name": "gsea_pvalue_tables.png"
+		},
+		{},
+		{}
 	]
 }

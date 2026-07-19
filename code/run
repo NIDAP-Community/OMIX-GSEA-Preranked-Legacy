@@ -8,7 +8,7 @@ cd /code
 
 # Copy documentation guide to results if it exists
 if [ -f "README.md" ]; then
-  cp GSEA_Legacy_READMEe.md /results/
+  cp READMEe.md /results/README_GSEA_Legacy.md
 fi
 
 Rscript main.R "$@"

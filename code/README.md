@@ -1,4 +1,4 @@
-# OMIX GSEA - App Panel User Guide
+# OMIX GSEA Legacy- App Panel User Guide
 
 Gene Set Enrichment Analysis (GSEA) for pre-ranked gene lists using the fgsea package.
 

@@ -246,7 +246,8 @@
 		{
 			"file_name": "gsea_pvalue_tables.png"
 		},
-		{},
-		{}
+		{
+			"file_name": "gsea_results.csv"
+		}
 	]
 }

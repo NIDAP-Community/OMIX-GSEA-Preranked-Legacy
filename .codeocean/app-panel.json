@@ -2,7 +2,7 @@
 	"version": 1,
 	"named_parameters": true,
 	"general": {
-		"title": "OMIX GSEA - Pre-ranked Gene Set Enrichment Analysis",
+		"title": "OMIX GSEA Legacy - Pre-ranked Gene Set Enrichment Analysis",
 		"instructions": "START HERE:\n1. **Try with demo data**: Leave 'DEG Table File' blank to automatically use the attached Mouse RNA-seq demo dataset\n2. **Or upload your own**: Use the 'DEG Table File' parameter to upload your DEG results (RDS/CSV/TSV)\n3. Configure the 'Gene Score Suffix' to match your ranking columns (default: _tstat)\n4. Select pathway 'Collections' to test (default: Hallmark + REACTOME)\n5. Run the analysis\n\nGSEA evaluates whether gene sets are enriched at the top or bottom of your ranked gene list. Results include NES scores, p-values with FDR correction, and leading edge genes.\n\nAdvanced users can customize gene set filtering, statistical settings, and output options."
 	},
 	"datasets": [

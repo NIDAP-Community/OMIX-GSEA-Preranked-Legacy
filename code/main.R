@@ -63,7 +63,7 @@ if (is.null(opt$deg_table) || opt$deg_table == "") {
   opt$deg_table <- "/data/deg_table/var_DEGAnalysis.rds"
   message("No DEG file uploaded. Using example data asset.")
 } else {
-  opt$deg_table <- "/data/DEG_Analysis.csv"
+  opt$deg_table <- "/results/DEG_Analysis.csv"
 }
 
 # Validate inputs exist

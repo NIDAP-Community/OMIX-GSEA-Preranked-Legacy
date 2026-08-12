@@ -57,13 +57,21 @@ while (i <= length(args)) {
 
 opt <- parse_args(parser, args = filtered_args)
 
-# Handle DEG table input: uploaded file takes priority, fallback to data asset
+# Handle DEG table input: uploaded file takes priority, then upstream output,
+# then the bundled demo asset.
 if (is.null(opt$deg_table) || opt$deg_table == "") {
-  # No file uploaded, use default data asset
-  opt$deg_table <- "/data/deg_table/var_DEGAnalysis.rds"
-  message("No DEG file uploaded. Using example data asset.")
-} else {
-  opt$deg_table <- "/results/DEG_Analysis.csv"
+  upstream_deg <- "/data/deg_table/DEG_Analysis.csv"
+  demo_deg <- "/data/deg_table/var_DEGAnalysis.rds"
+
+  if (file.exists(upstream_deg)) {
+    opt$deg_table <- upstream_deg
+    message("Using DEG_Analysis.csv from the attached deg_table asset.")
+  } else if (file.exists(demo_deg)) {
+    opt$deg_table <- demo_deg
+    message("No DEG file uploaded. Using example data asset.")
+  } else {
+    stop("ERROR: No DEG input found under /data/deg_table.")
+  }
 }
 
 # Validate inputs exist

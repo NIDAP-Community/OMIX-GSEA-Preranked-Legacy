@@ -60,7 +60,7 @@ opt <- parse_args(parser, args = filtered_args)
 # Handle DEG table input: uploaded file takes priority, then upstream output,
 # then the bundled demo asset.
 if (is.null(opt$deg_table) || opt$deg_table == "") {
-  upstream_deg <- "/data/deg_table/DEG_Analysis.csv"
+  upstream_deg <- "/data/DEG_Analysis.csv"
   demo_deg <- "/data/deg_table/var_DEGAnalysis.rds"
 
   if (file.exists(upstream_deg)) {

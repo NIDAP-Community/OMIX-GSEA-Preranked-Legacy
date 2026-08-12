@@ -1,5 +1,5 @@
 metadata_version: 1
-name: OMIX GSEA Preranked Legacy
+name: OMIX GSEA Preranked Legacy v.1
 description: Gene Set Enrichment Analysis (GSEA) for ranked gene lists using fgsea.
   Performs pre-ranked GSEA with MSigDB collections (Hallmark, REACTOME, etc.) on differential
   expression results. Supports multiple species via ortholog mapping. Generates enrichment

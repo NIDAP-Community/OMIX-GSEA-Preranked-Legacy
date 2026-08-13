@@ -991,7 +991,7 @@ GSEA_Preranked <- function(
     deg_species <- dplyr::inner_join(
       deg_table,
       ortholog,
-      by = stats::setNames(Gene_Names_Column, "Gene")
+      by = stats::setNames("Gene", Gene_Names_Column)
     )
     exist_ortholog <- ortholog %>%
       dplyr::filter(!is.na(Ortholog)) %>%
@@ -1023,7 +1023,7 @@ GSEA_Preranked <- function(
     deg_table <- dplyr::inner_join(
       deg_table,
       exist_ortholog,
-      by = stats::setNames(Gene_Names_Column, "Gene")
+      by = stats::setNames("Gene", Gene_Names_Column)
     ) %>%
       dplyr::select("Ortholog", everything(), -Gene_Names_Column)
     colnames(deg_table)[colnames(deg_table) == "Ortholog"] <-

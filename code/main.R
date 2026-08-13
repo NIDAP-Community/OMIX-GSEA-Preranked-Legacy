@@ -57,29 +57,45 @@ while (i <= length(args)) {
 
 opt <- parse_args(parser, args = filtered_args)
 
-# Handle DEG table input: uploaded file takes priority, then upstream output,
-# then the bundled demo asset.
+# Uploaded file takes priority. Otherwise, locate DEG_Analysis.csv passed
+# from the upstream workflow capsule anywhere under this capsule's /data.
+find_upstream_deg <- function() {
+  files <- list.files(
+    "/data",
+    recursive = TRUE,
+    full.names = TRUE,
+    all.files = FALSE
+  )
+
+  matches <- files[tolower(basename(files)) == "deg_analysis.csv"]
+
+  if (length(matches) > 0) {
+    return(matches[1])
+  }
+
+  NULL
+}
+
 if (is.null(opt$deg_table) || opt$deg_table == "") {
-  upstream_deg <- "/results/DEG_Analysis.csv"
+  upstream_deg <- find_upstream_deg()
   demo_deg <- "/data/deg_table/var_DEGAnalysis.rds"
 
-  if (file.exists(upstream_deg)) {
+  if (!is.null(upstream_deg)) {
     opt$deg_table <- upstream_deg
-    message("Using DEG_Analysis.csv from the attached deg_table asset.")
+    message("Using upstream DEG table: ", opt$deg_table)
   } else if (file.exists(demo_deg)) {
     opt$deg_table <- demo_deg
     message("No DEG file uploaded. Using example data asset.")
   } else {
-    stop("ERROR: No DEG input found under /data/deg_table.")
+    stop(
+      "ERROR: No DEG_Analysis.csv was received from the upstream capsule.\n",
+      "Visible files under /data:\n",
+      paste(
+        list.files("/data", recursive = TRUE, full.names = TRUE),
+        collapse = "\n"
+      )
+    )
   }
-}
-
-# Validate inputs exist
-if (!file.exists(opt$deg_table)) {
-  stop("ERROR: DEG table file not found: ", opt$deg_table)
-}
-if (!file.exists(opt$pathways_database)) {
-  stop("ERROR: Pathways database file not found: ", opt$pathways_database)
 }
 
 # Parse comma-separated collections

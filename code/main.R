@@ -147,7 +147,8 @@ results <- GSEA_Preranked(
   Sort_Output_By = opt$sort_by,
   Image_Width = opt$image_width,
   Image_Height = opt$image_height,
-  Image_Resolution = opt$image_resolution
+  Image_Resolution = opt$image_resolution,
+  Output_Directory = results_dir
 )
 
 # Save results

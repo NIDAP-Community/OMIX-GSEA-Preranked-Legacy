@@ -7,6 +7,12 @@ Version numbers correspond to Code Ocean capsule release versions (integers: v1,
 
 ## [Unreleased]
 
+### Changed
+- This repository is now documented as the Code Ocean deployment adapter for
+  the canonical platform-neutral OMIX module (2026-08-17).
+- The GSEA function now receives its figure output directory explicitly; the
+  capsule continues to write figures to `/results`.
+
 ### Added
 - OMIX Suite Documentation Guide file included in results output (2026-01-08)
   - Explains CHANGELOG and two-README structure

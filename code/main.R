@@ -14,7 +14,7 @@ source("functions/GSEA_Preranked.R")
 option_list <- list(
   make_option("--deg_table", type = "character", default = NULL, help = "Path to DEG table (TSV/CSV/RDS) - uploaded file or data asset"),
   make_option("--pathways_database", type = "character", default = "/data/msigdb/var_GSEA_MSigDB_v2023_2_CCBR_.rds", help = "Path to pathways database (TSV/CSV/RDS)"),
-  make_option("--gene_names_column", type = "character", default = NULL, help = "Gene name column in DEG table; auto-detects GeneName, then Gene when blank"),
+  make_option("--gene_names_column", type = "character", default = NULL, help = "Gene-symbol column in DEG table; auto-detects GeneName, then Gene Symbols when blank"),
   make_option("--species", type = "character", default = "Mouse", help = "Species in DEG table"),
   make_option("--gene_scores_suffix", type = "character", default = "_tstat", help = "Suffix for gene score columns"),
   make_option("--pathways_species", type = "character", default = "Human", help = "Species in pathways database"),
@@ -137,7 +137,7 @@ resolve_gene_names_column <- function(path, requested) {
     stop("ERROR: Unsupported DEG table format: ", path)
   }
 
-  candidates <- c("GeneName", "Gene", "gene_name", "GeneSymbol", "gene_symbol")
+  candidates <- c("GeneName", "Gene Symbols", "Gene", "gene_name", "GeneSymbol", "gene_symbol")
   detected <- candidates[candidates %in% available_columns]
   if (length(detected) == 0L) {
     stop(

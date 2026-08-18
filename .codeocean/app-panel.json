@@ -54,7 +54,7 @@
 			"category": "basic",
 			"name": "Gene Names Column",
 			"param_name": "gene_names_column",
-			"help_text": "Optional gene-symbol column. Leave blank to auto-detect GeneName, then Gene.",
+			"help_text": "Optional gene-symbol column. Leave blank to auto-detect GeneName (the demo and OMIX workflow default), then Gene Symbols and other common identifier names. Enter an exact column name to override.",
 			"type": "text",
 			"value_type": "string"
 		},

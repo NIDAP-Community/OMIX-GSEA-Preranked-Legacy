@@ -3,6 +3,8 @@ set -euo pipefail
 
 # Install fgsea from Bioconductor
 Rscript -e 'if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager"); BiocManager::install("fgsea", update = FALSE, ask = FALSE)'
+Rscript -e 'remotes::install_version("gridExtra", "2.3.1")'
+Rscript -e 'remotes::install_version("patchwork", "1.3.2")'
 
 # Install l2p and l2psupp from CCBR GitHub (ortholog mapping packages)
 Rscript -e 'install.packages("https://github.com/CCBR/l2p/raw/master/l2p_0.0-14.tar.gz", repos=NULL)'

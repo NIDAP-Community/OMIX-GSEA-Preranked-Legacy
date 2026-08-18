@@ -14,11 +14,11 @@ source("functions/GSEA_Preranked.R")
 option_list <- list(
   make_option("--deg_table", type = "character", default = NULL, help = "Path to DEG table (TSV/CSV/RDS) - uploaded file or data asset"),
   make_option("--pathways_database", type = "character", default = "/data/msigdb/var_GSEA_MSigDB_v2023_2_CCBR_.rds", help = "Path to pathways database (TSV/CSV/RDS)"),
-  make_option("--gene_names_column", type = "character", default = "Gene", help = "Gene name column in DEG table"),
-  make_option("--species", type = "character", default = "Human", help = "Species in DEG table"),
+  make_option("--gene_names_column", type = "character", default = NULL, help = "Gene name column in DEG table; auto-detects GeneName, then Gene when blank"),
+  make_option("--species", type = "character", default = "Mouse", help = "Species in DEG table"),
   make_option("--gene_scores_suffix", type = "character", default = "_tstat", help = "Suffix for gene score columns"),
   make_option("--pathways_species", type = "character", default = "Human", help = "Species in pathways database"),
-  make_option("--collections", type = "character", default = "H: hallmark gene sets,CP:REACTOME: Reactome gene sets", help = "Comma-separated collections"),
+  make_option("--collections", type = "character", default = "H: hallmark gene sets,C2:CP:REACTOME: Reactome gene sets", help = "Comma-separated collections"),
   make_option("--min_geneset_size", type = "integer", default = 15L, help = "Minimum geneset size"),
   make_option("--max_geneset_size", type = "integer", default = 500L, help = "Maximum geneset size"),
   make_option("--n_permutations", type = "integer", default = 5000L, help = "Number of permutations"),
@@ -109,6 +109,49 @@ if (is.null(opt$deg_table) || opt$deg_table == "") {
     )
   }
 }
+
+resolve_gene_names_column <- function(path, requested) {
+  if (!is.null(requested) && nzchar(requested) && tolower(requested) != "auto") {
+    return(requested)
+  }
+
+  extension <- tolower(tools::file_ext(path))
+  available_columns <- if (extension == "rds") {
+    object <- readRDS(path)
+    if (is.data.frame(object)) {
+      names(object)
+    } else if (is.list(object)) {
+      data_frames <- Filter(is.data.frame, object)
+      if (length(data_frames) == 0L) {
+        stop("ERROR: DEG RDS does not contain a data frame: ", path)
+      }
+      names(data_frames[[1L]])
+    } else {
+      stop("ERROR: DEG RDS does not contain a data frame: ", path)
+    }
+  } else if (extension == "csv") {
+    names(read.csv(path, nrows = 0L, check.names = FALSE))
+  } else if (extension %in% c("tsv", "txt")) {
+    names(read.delim(path, nrows = 0L, check.names = FALSE))
+  } else {
+    stop("ERROR: Unsupported DEG table format: ", path)
+  }
+
+  candidates <- c("GeneName", "Gene", "gene_name", "GeneSymbol", "gene_symbol")
+  detected <- candidates[candidates %in% available_columns]
+  if (length(detected) == 0L) {
+    stop(
+      "ERROR: Could not auto-detect the gene-name column. ",
+      "Specify the Gene Names Column. Available columns: ",
+      paste(available_columns, collapse = ", ")
+    )
+  }
+
+  message("Auto-detected gene-name column: ", detected[[1L]])
+  detected[[1L]]
+}
+
+opt$gene_names_column <- resolve_gene_names_column(opt$deg_table, opt$gene_names_column)
 
 # Parse comma-separated collections
 collections <- trimws(strsplit(opt$collections, ",")[[1]])

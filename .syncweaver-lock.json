@@ -1,0 +1,6 @@
+{
+  "host": "NIDAP-Community/OMIX-GSEA-Preranked-Legacy",
+  "orchestrator": "NIDAP-Community/syncweaver-orchestrator",
+  "syncweaver_version": "0.1.1-dev",
+  "sources": {}
+}

@@ -32,9 +32,10 @@ Abl1        -3.45       -2.89
 ```
 
 ### 2. Gene Names Column
-**Which column contains gene identifiers** (default: Gene)
+**Which column contains gene identifiers** (optional; automatically detects
+`GeneName` first, then `Gene Symbols` and `Gene` when left blank)
 - Must match the column name exactly in your DEG table
-- Common examples: `Gene`, `gene_name`, `symbol`, `gene_id`
+- Common examples: `GeneName`, `Gene Symbols`, `Gene`, `gene_name`, `symbol`, `gene_id`
 
 ### 3. Species
 **Select your input organism** (default: Mouse)

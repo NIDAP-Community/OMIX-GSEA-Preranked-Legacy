@@ -54,10 +54,9 @@
 			"category": "basic",
 			"name": "Gene Names Column",
 			"param_name": "gene_names_column",
-			"help_text": "Column name containing gene symbols in the DEG table",
+			"help_text": "Optional gene-symbol column. Leave blank to auto-detect GeneName (the demo and OMIX workflow default), then Gene Symbols and other common identifier names. Enter an exact column name to override.",
 			"type": "text",
-			"value_type": "string",
-			"default_value": "Gene"
+			"value_type": "string"
 		},
 		{
 			"id": "7gOLsdim1E7WncQ0",

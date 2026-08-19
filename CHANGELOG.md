@@ -12,6 +12,11 @@ Version numbers correspond to Code Ocean capsule release versions (integers: v1,
   the canonical platform-neutral OMIX module (2026-08-17).
 - The GSEA function now receives its figure output directory explicitly; the
   capsule continues to write figures to `/results`.
+- When the Gene Names Column is left blank, the capsule now detects
+  `GeneName` first and then `Gene`; cross-species output maps back to that
+  detected source column correctly.
+- Updated the default Reactome collection identifier to
+  `C2:CP:REACTOME: Reactome gene sets`.
 
 ### Added
 - OMIX Suite Documentation Guide file included in results output (2026-01-08)

@@ -1,14 +1,26 @@
 # OMIX GSEA
 
-Gene Set Enrichment Analysis (GSEA) for pre-ranked gene lists using the fgsea package. Part of the OMIX analysis suite.
+Gene Set Enrichment Analysis (GSEA) for pre-ranked gene lists using the fgsea
+package.
 
-## Related repositories
+## Canonical OMIX module
 
-This repository is the **Code Ocean deployment adapter** for GSEA. The
-platform-neutral source, CLI, tests, and interface schema are maintained in
-the canonical [OMIX GSEA module](https://github.com/NIDAP-Community/OMIX/tree/main/modules/OMIX-GSEA-Preranked-Legacy).
-Read the [OMIX module contract](https://github.com/NIDAP-Community/OMIX/blob/main/docs/module-contract.md#code-ocean-deployment-adapters)
-before changing shared scientific behavior.
+| Item | Location |
+| --- | --- |
+| Canonical module | [OMIX GSEA Preranked Legacy](https://github.com/NIDAP-Community/OMIX/tree/main/modules/OMIX-GSEA-Preranked-Legacy) |
+| Interface contract | [schemas/interface.yml](https://github.com/NIDAP-Community/OMIX/blob/main/modules/OMIX-GSEA-Preranked-Legacy/schemas/interface.yml) |
+| Development contract | [OMIX module contract](https://github.com/NIDAP-Community/OMIX/blob/main/docs/module-contract.md) |
+| Released source reference | [OMIX_MODULE_SOURCE.md](OMIX_MODULE_SOURCE.md) |
+
+The canonical module owns scientific behavior, portable CLI operation, tests,
+and the reusable input/output contract. This repository is its Code Ocean
+deployment adapter.
+
+## What this deployment adds
+
+- The Code Ocean App Panel and capsule entry point.
+- Uploaded and attached DEG-table discovery under `/data`.
+- Capsule outputs under `/results` and the pinned runtime configuration.
 
 ## Overview
 
@@ -145,6 +157,12 @@ For questions or issues:
 - **CCBR**: CCR Collaborative Bioinformatics Resource
 
 For detailed step-by-step instructions on using the App Panel, see `/code/README.md`.
+
+## For developers
+
+Read [AGENTS.md](AGENTS.md) and [OMIX_MODULE_SOURCE.md](OMIX_MODULE_SOURCE.md)
+before editing. Reusable scientific changes belong in the canonical OMIX module
+and are exported here only after validation.
 
 ---
 

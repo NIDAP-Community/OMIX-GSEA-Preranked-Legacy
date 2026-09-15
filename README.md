@@ -81,6 +81,14 @@ Differential expression results with:
 **Column naming pattern:** `{comparison}_{suffix}`  
 Example: `TreatmentA_tstat`, `TreatmentB_tstat`, `Control_tstat`
 
+### Contrast selection and order
+
+Leave **Contrasts (Optional)** blank to analyze every ranking-score column
+that ends in the selected **Gene Score Suffix**, in the input-table column
+order. To run a selected ordered subset, enter comma-separated names such as
+`B-A,C-A,C-B`. Each name must exactly match the prefix of a ranking-score
+column (for example, `B-A_tstat`).
+
 **Demo dataset included**: Mouse RNA-seq data runs automatically if no file is uploaded.
 
 ## Supported Species

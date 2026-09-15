@@ -9,34 +9,34 @@
 		{
 			"id": "28035d52-03e6-4761-8f50-72d48af496d1",
 			"name": "Demo DEG Table",
-			"help_text": "Mouse RNA-seq demo data with ranking scores (t-statistics) for multiple comparisons. Used automatically if no file is uploaded."
+			"description": "Mouse RNA-seq demo data with ranking scores (t-statistics) for multiple comparisons. Used automatically if no file is uploaded."
 		},
 		{
 			"id": "eb51e72e-bcb9-400d-bf94-fc8cad85c7f1",
 			"name": "Pathways Database (MSigDB)",
-			"help_text": "MSigDB v2023.2 - Molecular Signatures Database with Hallmark, GO, REACTOME, KEGG, and other pathway collections."
+			"description": "MSigDB v2023.2 - Molecular Signatures Database with Hallmark, GO, REACTOME, KEGG, and other pathway collections."
 		}
 	],
 	"categories": [
 		{
 			"id": "basic",
 			"name": "⭐ Basic Settings",
-			"help_text": "Essential parameters to configure before running analysis"
+			"description": "Essential parameters to configure before running analysis"
 		},
 		{
 			"id": "filters",
 			"name": "Gene Set Filters",
-			"help_text": "Filter gene sets by size to focus on relevant pathways"
+			"description": "Filter gene sets by size to focus on relevant pathways"
 		},
 		{
 			"id": "stats",
 			"name": "Statistical Settings",
-			"help_text": "Control statistical testing and significance calculations"
+			"description": "Control statistical testing and significance calculations"
 		},
 		{
 			"id": "output",
 			"name": "Output Options",
-			"help_text": "Customize result sorting and plot dimensions"
+			"description": "Customize result sorting and plot dimensions"
 		}
 	],
 	"parameters": [
@@ -45,7 +45,7 @@
 			"category": "basic",
 			"name": "DEG Table File",
 			"param_name": "deg_table",
-			"help_text": "Upload your differential expression results file (RDS/CSV/TSV). Leave blank to automatically use the attached demo dataset.",
+			"description": "Upload your differential expression results file (RDS/CSV/TSV). Leave blank to automatically use the attached demo dataset.",
 			"type": "file",
 			"value_type": "string"
 		},
@@ -54,7 +54,7 @@
 			"category": "basic",
 			"name": "Gene Names Column",
 			"param_name": "gene_names_column",
-			"help_text": "Optional gene-symbol column. Leave blank to auto-detect GeneName (the demo and OMIX workflow default), then Gene Symbols and other common identifier names. Enter an exact column name to override.",
+			"description": "Optional gene-symbol column. Leave blank to auto-detect GeneName (the demo and OMIX workflow default), then Gene Symbols and other common identifier names. Enter an exact column name to override.",
 			"type": "text",
 			"value_type": "string"
 		},
@@ -63,7 +63,7 @@
 			"category": "basic",
 			"name": "Species",
 			"param_name": "species",
-			"help_text": "Species for gene annotations in your input DEG table. Non-human genes are automatically converted to human orthologs for pathway analysis.",
+			"description": "Species for gene annotations in your input DEG table. Non-human genes are automatically converted to human orthologs for pathway analysis.",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "Mouse",
@@ -84,7 +84,7 @@
 			"category": "basic",
 			"name": "Gene Score Suffix",
 			"param_name": "gene_scores_suffix",
-			"help_text": "Suffix in column names containing gene ranking scores (e.g., if you have 'TreatmentA_tstat' and 'TreatmentB_tstat' columns, use '_tstat')",
+			"description": "Suffix in column names containing gene ranking scores (e.g., if you have 'TreatmentA_tstat' and 'TreatmentB_tstat' columns, use '_tstat')",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "_tstat",
@@ -94,11 +94,21 @@
 			]
 		},
 		{
+			"id": "Fq7Lk2wB9mXrP4dV",
+			"category": "basic",
+			"name": "Contrasts (Optional)",
+			"param_name": "contrasts",
+			"description": "Comma-separated contrast names to analyze in the specified order (for example, B-A,C-A,C-B). Leave blank to analyze every column ending in Gene Score Suffix in source-table column order.",
+			"type": "text",
+			"value_type": "string",
+			"default_value": ""
+		},
+		{
 			"id": "o8Ilqr1LnEsHFCzM",
 			"category": "basic",
 			"name": "Pathways Species",
 			"param_name": "pathways_species",
-			"help_text": "Species in the pathways database. Recommended: Keep as 'Human' for H/C collections - non-human input genes are automatically mapped to human orthologs. Use 'Mouse' only for M-prefix collections.",
+			"description": "Species in the pathways database. Recommended: Keep as 'Human' for H/C collections - non-human input genes are automatically mapped to human orthologs. Use 'Mouse' only for M-prefix collections.",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "Human",
@@ -112,7 +122,7 @@
 			"category": "basic",
 			"name": "Collections",
 			"param_name": "collections",
-			"help_text": "Comma-separated MSigDB collection names. Recommended: Use Human collections (H/C prefix) regardless of input species. Examples: 'H: hallmark gene sets' or 'H: hallmark gene sets,C2:CP:REACTOME: Reactome gene sets'. See README for complete list.",
+			"description": "Comma-separated MSigDB collection names. Recommended: Use Human collections (H/C prefix) regardless of input species. Examples: 'H: hallmark gene sets' or 'H: hallmark gene sets,C2:CP:REACTOME: Reactome gene sets'. See README for complete list.",
 			"type": "text",
 			"value_type": "string",
 			"default_value": "H: hallmark gene sets,C2:CP:REACTOME: Reactome gene sets"
@@ -122,7 +132,7 @@
 			"category": "filters",
 			"name": "Min Geneset Size",
 			"param_name": "min_geneset_size",
-			"help_text": "Exclude gene sets with fewer than this many genes (smaller sets may be less reliable)",
+			"description": "Exclude gene sets with fewer than this many genes (smaller sets may be less reliable)",
 			"type": "text",
 			"value_type": "number",
 			"default_value": "15",
@@ -133,7 +143,7 @@
 			"category": "filters",
 			"name": "Max Geneset Size",
 			"param_name": "max_geneset_size",
-			"help_text": "Exclude gene sets with more than this many genes (very large sets often lack specificity)",
+			"description": "Exclude gene sets with more than this many genes (very large sets often lack specificity)",
 			"type": "text",
 			"value_type": "number",
 			"default_value": "500",
@@ -144,7 +154,7 @@
 			"category": "stats",
 			"name": "Number of Permutations",
 			"param_name": "n_permutations",
-			"help_text": "Number of permutations for p-value calculation. Higher = more accurate but slower (typical: 1000-10000)",
+			"description": "Number of permutations for p-value calculation. Higher = more accurate but slower (typical: 1000-10000)",
 			"type": "text",
 			"value_type": "number",
 			"default_value": "5000",
@@ -155,7 +165,7 @@
 			"category": "stats",
 			"name": "Random Seed",
 			"param_name": "random_seed",
-			"help_text": "Seed for reproducible permutation test results",
+			"description": "Seed for reproducible permutation test results",
 			"type": "text",
 			"value_type": "number",
 			"default_value": "246642"
@@ -165,7 +175,7 @@
 			"category": "stats",
 			"name": "FDR Correction Mode",
 			"param_name": "fdr_mode",
-			"help_text": "Apply FDR correction within each collection separately or across all collections together",
+			"description": "Apply FDR correction within each collection separately or across all collections together",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "within each collection",
@@ -179,7 +189,7 @@
 			"category": "stats",
 			"name": "Collapse Redundancy",
 			"param_name": "collapse_redundancy",
-			"help_text": "Use fgsea's collapsePathways to reduce redundant pathways in results",
+			"description": "Use fgsea's collapsePathways to reduce redundant pathways in results",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "false",
@@ -193,7 +203,7 @@
 			"category": "output",
 			"name": "Sort By",
 			"param_name": "sort_by",
-			"help_text": "Column to sort output results table by",
+			"description": "Column to sort output results table by",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "pval",
@@ -212,7 +222,7 @@
 			"category": "output",
 			"name": "Image Width (pixels)",
 			"param_name": "image_width",
-			"help_text": "Width of output plots in pixels",
+			"description": "Width of output plots in pixels",
 			"type": "text",
 			"value_type": "number",
 			"default_value": "2500",
@@ -223,7 +233,7 @@
 			"category": "output",
 			"name": "Image Height (pixels)",
 			"param_name": "image_height",
-			"help_text": "Height of output plots in pixels",
+			"description": "Height of output plots in pixels",
 			"type": "text",
 			"value_type": "number",
 			"default_value": "2500",
@@ -234,7 +244,7 @@
 			"category": "output",
 			"name": "Image Resolution (dpi)",
 			"param_name": "image_resolution",
-			"help_text": "Resolution for output plots (typical: 300 for publications, 150 for web)",
+			"description": "Resolution for output plots (typical: 300 for publications, 150 for web)",
 			"type": "text",
 			"value_type": "number",
 			"default_value": "300",

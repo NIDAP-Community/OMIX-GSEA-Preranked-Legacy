@@ -1,19 +1,43 @@
-# OMIX module source
+# Canonical OMIX Module Source
 
-This repository is the Code Ocean deployment adapter for the canonical OMIX
-module:
+## Canonical module
 
-`NIDAP-Community/OMIX/modules/OMIX-GSEA-Preranked-Legacy`
+- **Module:** [OMIX GSEA Preranked Legacy](https://github.com/NIDAP-Community/OMIX/tree/main/modules/OMIX-GSEA-Preranked-Legacy)
+- **Canonical path:** `modules/OMIX-GSEA-Preranked-Legacy/`
+- **Canonical module version:** `5.2.0`
+- **Canonical interface version:** `1`
+- **Canonical release tag:** Pending — baseline tag not yet established.
+- **Canonical source reference:** [`b65eeb3c231eb9dfbdbc09326ab03c23bbe84c8f`](https://github.com/NIDAP-Community/OMIX/commit/b65eeb3c231eb9dfbdbc09326ab03c23bbe84c8f)
+- **Interface schema:** [schemas/interface.yml](https://github.com/NIDAP-Community/OMIX/blob/main/modules/OMIX-GSEA-Preranked-Legacy/schemas/interface.yml)
+- **Module contract:** [OMIX module contract](https://github.com/NIDAP-Community/OMIX/blob/main/docs/module-contract.md)
 
-The canonical module owns the reusable R implementation, platform-neutral CLI,
-tests, and interface schema. This repository owns Code Ocean-specific files:
-App Panel metadata, `/data` input discovery, `/results` output handling, and
-the capsule environment.
+## Exported scientific files
 
-Author scientific changes in the OMIX monorepo first, then export the released
-module implementation into this capsule repository. If a change starts in the
-Code Ocean capsule, test it there, backport the underlying scientific change to
-the OMIX module, and then re-export it here.
+| Canonical file | Adapter copy | Purpose |
+| --- | --- | --- |
+| `R/GSEA_Preranked.R` | `code/functions/GSEA_Preranked.R` | Preranked GSEA implementation. |
 
-Read the canonical development and release guidance in the
-[OMIX module contract](https://github.com/NIDAP-Community/OMIX/blob/main/docs/module-contract.md#code-ocean-deployment-adapters).
+The listed export was verified byte-for-byte against the canonical source
+reference above.
+
+## Adapter release record
+
+| Field | Recorded value |
+| --- | --- |
+| Adapter version | Pending — baseline tag not yet established. |
+| Adapter release tag | Pending. |
+| Platform release | Pending validation record. |
+| Runtime identity | Not yet recorded as an immutable image digest or lockfile reference. |
+
+See the [OMIX versioning and release policy](https://github.com/NIDAP-Community/OMIX/blob/main/docs/versioning-and-releases.md). The source commit, adapter tag, platform release, and runtime identity are separate records.
+
+## Ownership and synchronization
+
+The canonical module owns scientific functions, portable CLI behavior, schemas,
+tests, and scientific documentation. This adapter owns deployment UI, input
+discovery, result paths, runtime setup, and the platform entry point.
+
+Make reusable changes in the canonical module, update its tests and interface,
+record the next canonical version and immutable source reference here, and then re-export the listed
+file without unreviewed behavioral changes. Validate the adapter with
+representative deployment inputs before release.

@@ -17,6 +17,7 @@ option_list <- list(
   make_option("--gene_names_column", type = "character", default = NULL, help = "Gene-symbol column in DEG table; auto-detects GeneName, then Gene Symbols when blank"),
   make_option("--species", type = "character", default = "Mouse", help = "Species in DEG table"),
   make_option("--gene_scores_suffix", type = "character", default = "_tstat", help = "Suffix for gene score columns"),
+  make_option("--contrasts", type = "character", default = NULL, help = "Optional comma-separated contrasts, analyzed in this order"),
   make_option("--pathways_species", type = "character", default = "Human", help = "Species in pathways database"),
   make_option("--collections", type = "character", default = "H: hallmark gene sets,C2:CP:REACTOME: Reactome gene sets", help = "Comma-separated collections"),
   make_option("--min_geneset_size", type = "integer", default = 15L, help = "Minimum geneset size"),
@@ -155,6 +156,14 @@ opt$gene_names_column <- resolve_gene_names_column(opt$deg_table, opt$gene_names
 
 # Parse comma-separated collections
 collections <- trimws(strsplit(opt$collections, ",")[[1]])
+contrasts <- if (is.null(opt$contrasts) || !nzchar(trimws(opt$contrasts))) {
+  character(0)
+} else {
+  trimws(strsplit(opt$contrasts, ",", fixed = TRUE)[[1L]])
+}
+if (anyDuplicated(contrasts)) {
+  stop("ERROR: Contrasts must not contain duplicates.")
+}
 
 # Convert string booleans
 collapse_redundancy <- tolower(opt$collapse_redundancy) == "true"
@@ -170,6 +179,9 @@ message("DEG Table: ", opt$deg_table)
 message("Pathways Database: ", opt$pathways_database)
 message("Species: ", opt$species)
 message("Collections: ", paste(collections, collapse = ", "))
+if (length(contrasts) > 0L) {
+  message("Contrasts (ordered): ", paste(contrasts, collapse = ", "))
+}
 message("========================================\n")
 
 # Run GSEA
@@ -179,6 +191,8 @@ results <- GSEA_Preranked(
   Gene_Names_Column = opt$gene_names_column,
   species = opt$species,
   Gene_Scores_Column_s_Suffix = opt$gene_scores_suffix,
+  Contrasts = contrasts,
+  Contrasts_Filter = if (length(contrasts) > 0L) "keep" else "none",
   Pathways_Database_Species = opt$pathways_species,
   Collections_to_Include = collections,
   Minimum_Gene_Set_Size = opt$min_geneset_size,

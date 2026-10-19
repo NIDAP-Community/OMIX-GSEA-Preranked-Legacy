@@ -6,6 +6,10 @@
 			"mount": "deg_table"
 		},
 		{
+			"id": "46f900c9-ad59-4e80-9083-d845aab3dc21",
+			"mount": "msigdb_1"
+		},
+		{
 			"id": "eb51e72e-bcb9-400d-bf94-fc8cad85c7f1",
 			"mount": "msigdb"
 		}

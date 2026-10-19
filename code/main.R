@@ -13,7 +13,7 @@ source("functions/GSEA_Preranked.R")
 # Define CLI options
 option_list <- list(
   make_option("--deg_table", type = "character", default = NULL, help = "Path to DEG table (TSV/CSV/RDS) - uploaded file or data asset"),
-  make_option("--pathways_database", type = "character", default = "/data/msigdb/var_GSEA_MSigDB_v2023_2_CCBR_.rds", help = "Path to pathways database (TSV/CSV/RDS)"),
+  make_option("--pathways_database", type = "character", default = "/data/msigdb_1/var_GSEA_MSigDB_v2023_2_CCBR_.rds", help = "Path to pathways database (TSV/CSV/RDS)"),
   make_option("--gene_names_column", type = "character", default = NULL, help = "Gene-symbol column in DEG table; auto-detects GeneName, then Gene Symbols when blank"),
   make_option("--species", type = "character", default = "Mouse", help = "Species in DEG table"),
   make_option("--gene_scores_suffix", type = "character", default = "_tstat", help = "Suffix for gene score columns"),

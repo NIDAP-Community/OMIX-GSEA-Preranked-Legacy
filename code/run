@@ -11,4 +11,4 @@ if [ -f "README.md" ]; then
   cp README.md /results
 fi
 
-Rscript main.R "$@"
+Rscript code/modules/OMIX-GSEA-Preranked-Legacy/scripts/run_gsea.R "$@"

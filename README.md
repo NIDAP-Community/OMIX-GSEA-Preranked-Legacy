@@ -21,6 +21,9 @@ deployment adapter.
 - The Code Ocean App Panel and capsule entry point.
 - Uploaded and attached DEG-table discovery under `/data`.
 - Capsule outputs under `/results` and the pinned runtime configuration.
+- Empty file selection resolves one attached table or one appropriately named
+  workflow result; recognized Seurat FindMarkers tables are normalized
+  automatically.
 
 ## Overview
 
@@ -76,7 +79,12 @@ Unlike over-representation analysis (ORA) which tests if specific genes are enri
 Differential expression results with:
 - **Gene identifiers** (e.g., HGNC symbols)
 - **Ranking scores**: t-statistics or log fold-changes for each comparison
-- **Format**: RDS, CSV, or TSV
+- **Format**: RDS, CSV, TSV, or TXT
+
+Choose a file explicitly when more than one candidate is available. When the
+file selection is blank, the adapter accepts exactly one supported table
+attached with mount name `deg_table`, or exactly one connected workflow result
+whose filename contains `deg` or `marker`.
 
 **Column naming pattern:** `{comparison}_{suffix}`  
 Example: `TreatmentA_tstat`, `TreatmentB_tstat`, `Control_tstat`
@@ -89,7 +97,10 @@ order. To run a selected ordered subset, enter comma-separated names such as
 `B-A,C-A,C-B`. Each name must exactly match the prefix of a ranking-score
 column (for example, `B-A_tstat`).
 
-**Demo dataset included**: Mouse RNA-seq data runs automatically if no file is uploaded.
+**Seurat FindMarkers input**: Wide FindMarkers output with a `Gene` column and
+comparison columns such as `C_1_vs_2_logFC` is recognized automatically. GSEA
+uses its signed log-fold-change columns for ranking; leave **Gene Score Suffix**
+at its default.
 
 ## Supported Species
 

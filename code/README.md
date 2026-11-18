@@ -4,9 +4,9 @@ Gene Set Enrichment Analysis (GSEA) for pre-ranked gene lists using the fgsea pa
 
 ## Quick Start
 
-1. **Try with demo data**: Leave 'DEG Table File' blank to automatically use the attached Mouse RNA-seq demo dataset
-2. **Or upload your own**: Use the 'DEG Table File' parameter to upload your DEG results (RDS/CSV/TSV)
-3. Configure the 'Gene Score Suffix' to match your ranking columns (default: `_tstat`)
+1. **Use the attached or workflow result**: Leave 'DEG Table File' blank when exactly one compatible table is available
+2. **Or select your own**: Upload or select a DEG result (RDS/CSV/TSV/TXT)
+3. Seurat FindMarkers output is recognized automatically; otherwise configure the 'Gene Score Suffix' to match your ranking columns
 4. Select pathway 'Collections' to test (default: Hallmark + REACTOME)
 5. Run the analysis
 
@@ -16,8 +16,10 @@ Configure these essential parameters in the **⭐ Basic Settings** category:
 
 ### 1. DEG Table File
 **Input your differential expression data:**
-- **Upload your own file**: Click to upload RDS, CSV, or TSV format
-- **Use demo data**: Leave blank to automatically use the attached demo dataset (Mouse RNA-seq example)
+- **Upload or select a file**: Use RDS, CSV, TSV, or TXT format
+- **Use an attached or workflow table**: Leave blank when exactly one supported
+  table is attached with mount name `deg_table`, or one workflow result whose
+  filename contains `deg` or `marker` is connected
 
 **Required columns in your file:**
 - Gene identifier column (e.g., `Gene`, `symbol`)
@@ -47,6 +49,11 @@ Abl1        -3.45       -2.89
 - Select `_tstat` if your ranking columns are named like `ComparisonA_tstat`, `ComparisonB_tstat`
 - Select `_logFC` if using log fold-change rankings
 - The tool will analyze all columns ending with this suffix as separate contrasts
+
+**Seurat FindMarkers output:** A wide table with `Gene` and columns such as
+`C_1_vs_2_logFC` is recognized automatically. The adapter uses its signed
+log-fold-change columns even though the App Panel's standard default is
+`_tstat`.
 
 ### 5. Pathways Species
 **Species in the pathways database** (default: Human)
@@ -190,7 +197,8 @@ If your DEG table has `TreatmentA_tstat`, `TreatmentB_tstat`, and `TreatmentC_ts
 3. **Keep Pathways Species as Human**: Use Human collections with automatic ortholog mapping
 4. **Filter gene set sizes**: Defaults (15-500) work well for most analyses
 5. **Check leading edge genes**: These genes reveal the biological mechanism
-6. **Try the demo data first**: Familiarize yourself with the tool before analyzing your data
+6. **Use a single unambiguous input**: Select a file explicitly if the
+   attachment or workflow contains more than one candidate DEG table
 
 ## Support
 

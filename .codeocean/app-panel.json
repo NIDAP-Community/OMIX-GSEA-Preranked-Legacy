@@ -3,7 +3,7 @@
 	"named_parameters": true,
 	"general": {
 		"title": "OMIX GSEA Legacy - Pre-ranked Gene Set Enrichment Analysis",
-		"instructions": "START HERE:\n1. **Try with demo data**: Leave 'DEG Table File' blank to automatically use the attached Mouse RNA-seq demo dataset\n2. **Or upload your own**: Use the 'DEG Table File' parameter to upload your DEG results (RDS/CSV/TSV)\n3. Configure the 'Gene Score Suffix' to match your ranking columns (default: _tstat)\n4. Select pathway 'Collections' to test (default: Hallmark + REACTOME)\n5. Run the analysis\n\nGSEA evaluates whether gene sets are enriched at the top or bottom of your ranked gene list. Results include NES scores, p-values with FDR correction, and leading edge genes.\n\nAdvanced users can customize gene set filtering, statistical settings, and output options."
+		"instructions": "START HERE:\n1. **Try with demo data**: Leave 'DEG Table File' blank to use the single attached DEG table\n2. **Or provide your own**: Upload a file, attach one table with mount name 'deg_table', or connect one workflow result whose filename contains 'deg' or 'marker'\n3. Seurat FindMarkers tables are recognized automatically and ranked by signed log fold-change; otherwise select the matching 'Gene Score Suffix'\n4. Select pathway 'Collections' to test (default: Hallmark + REACTOME)\n5. Run the analysis\n\nGSEA evaluates whether gene sets are enriched at the top or bottom of your ranked gene list. Results include NES scores, p-values with FDR correction, and leading edge genes.\n\nAdvanced users can customize gene set filtering, statistical settings, and output options."
 	},
 	"datasets": [
 		{
@@ -40,7 +40,7 @@
 			"category": "basic",
 			"name": "DEG Table File",
 			"param_name": "deg_table",
-			"description": "Upload your differential expression results file (RDS/CSV/TSV). Leave blank to automatically use the attached demo dataset.",
+			"description": "Optional explicit RDS, CSV, TSV, or TXT DEG table. Leave blank when one supported table is attached with mount name 'deg_table' or one compatible workflow result is connected.",
 			"type": "file",
 			"value_type": "string"
 		},
@@ -49,7 +49,7 @@
 			"category": "basic",
 			"name": "Gene Names Column",
 			"param_name": "gene_names_column",
-			"description": "Optional gene-symbol column. Leave blank to auto-detect GeneName (the demo and OMIX workflow default), then Gene Symbols and other common identifier names. Enter an exact column name to override.",
+			"description": "Optional gene-symbol column. Leave blank to auto-detect common identifiers; recognized Seurat FindMarkers tables use their Gene column. Enter an exact column name to override.",
 			"type": "text",
 			"value_type": "string"
 		},
@@ -79,7 +79,7 @@
 			"category": "basic",
 			"name": "Gene Score Suffix",
 			"param_name": "gene_scores_suffix",
-			"description": "Suffix in column names containing gene ranking scores (e.g., if you have 'TreatmentA_tstat' and 'TreatmentB_tstat' columns, use '_tstat')",
+			"description": "Suffix in standard column names containing gene ranking scores (for example, 'TreatmentA_tstat'). Recognized Seurat FindMarkers tables use signed log fold-change automatically.",
 			"type": "list",
 			"value_type": "string",
 			"default_value": "_tstat",

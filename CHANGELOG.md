@@ -7,7 +7,16 @@ Version numbers correspond to Code Ocean capsule release versions (integers: v1,
 
 ## [Unreleased]
 
+### Fixed
+- Blank DEG selection now discovers one compatible attached table or a
+  connected workflow result with deg or marker in its filename, including
+  Seurat FindMarkers output named deg_gene_expression_markers.csv.
+
 ### Changed
+- Recognized Seurat FindMarkers tables now use their signed log-fold-change
+  columns for preranked GSEA automatically.
+- Updated the deployment runtime to omix-r-pathway
+  r4.4.3-bioconductor3.20-v3, which provides OmixPathwayInputs.
 - This repository is now documented as the Code Ocean deployment adapter for
   the canonical platform-neutral OMIX module (2026-08-17).
 - The GSEA function now receives its figure output directory explicitly; the

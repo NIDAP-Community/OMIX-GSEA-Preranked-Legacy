@@ -1,20 +1,26 @@
 #!/usr/bin/env Rscript
 
-# OMIX GSEA - CLI-first Gene Set Enrichment Analysis
-# Accepts parameters via command-line arguments from App Panel
+# Code Ocean entry point for OMIX GSEA preranked analysis.
 
 suppressPackageStartupMessages({
   library(optparse)
 })
 
-# Source the GSEA function
 source("functions/GSEA_Preranked.R")
+source("functions/input_discovery.R")
 
-# Define CLI options
+if (!requireNamespace("OmixPathwayInputs", quietly = TRUE)) {
+  stop(
+    "ERROR: OmixPathwayInputs is required for FindMarkers DEG input support. ",
+    "Use the configured OMIX r-pathway runtime.",
+    call. = FALSE
+  )
+}
+
 option_list <- list(
-  make_option("--deg_table", type = "character", default = NULL, help = "Path to DEG table (TSV/CSV/RDS) - uploaded file or data asset"),
+  make_option("--deg_table", type = "character", default = NULL, help = "Path to DEG table (TSV/CSV/RDS)"),
   make_option("--pathways_database", type = "character", default = "/data/msigdb_1/var_GSEA_MSigDB_v2023_2_CCBR_.rds", help = "Path to pathways database (TSV/CSV/RDS)"),
-  make_option("--gene_names_column", type = "character", default = NULL, help = "Gene-symbol column in DEG table; auto-detects GeneName, then Gene Symbols when blank"),
+  make_option("--gene_names_column", type = "character", default = NULL, help = "Gene-symbol column in DEG table; auto-detect when blank"),
   make_option("--species", type = "character", default = "Mouse", help = "Species in DEG table"),
   make_option("--gene_scores_suffix", type = "character", default = "_tstat", help = "Suffix for gene score columns"),
   make_option("--contrasts", type = "character", default = NULL, help = "Optional comma-separated contrasts, analyzed in this order"),
@@ -38,137 +44,70 @@ parser <- OptionParser(
   description = "Run GSEA pre-ranked analysis on gene expression data"
 )
 
-# Filter out empty string arguments before optparse sees them
-# Code Ocean passes --param "" for blank file uploads, which optparse rejects
+# Code Ocean passes --param "" for blank optional file uploads. Remove those
+# pairs before optparse sees them.
 args <- commandArgs(trailingOnly = TRUE)
 filtered_args <- character()
-i <- 1
+i <- 1L
 while (i <= length(args)) {
-  # Skip standalone empty strings
-  if (args[i] == "") {
-    i <- i + 1
-  } else if (i < length(args) && startsWith(args[i], "--") && args[i+1] == "") {
-    # Skip flag + empty value pairs
-    i <- i + 2
+  if (args[[i]] == "") {
+    i <- i + 1L
+  } else if (i < length(args) && startsWith(args[[i]], "--") && args[[i + 1L]] == "") {
+    i <- i + 2L
   } else {
-    filtered_args <- c(filtered_args, args[i])
-    i <- i + 1
+    filtered_args <- c(filtered_args, args[[i]])
+    i <- i + 1L
   }
 }
 
 opt <- parse_args(parser, args = filtered_args)
 
-# Uploaded file takes priority. Otherwise, locate a CSV whose name matches
-# the DEG regex passed from the upstream workflow capsule anywhere under
-# this capsule's /data.
-find_upstream_deg <- function() {
-  files <- list.files(
-    "/data",
-    recursive = TRUE,
-    full.names = TRUE,
-    all.files = FALSE
-  )
-
-  file_names <- basename(files)
-  matches <- files[
-    grepl("DEG", file_names) &
-      grepl("\\.csv$", file_names, ignore.case = TRUE)
-  ]
-
-  if (length(matches) == 1L) {
-    return(matches)
-  }
-
-  if (length(matches) > 1L) {
-    stop(
-      "ERROR: Multiple upstream DEG CSV files were found:\\n",
-      paste(matches, collapse = "\\n")
-    )
-  }
-
-  NULL
-}
-
-if (is.null(opt$deg_table) || opt$deg_table == "") {
-  upstream_deg <- find_upstream_deg()
-  demo_deg <- "/data/deg_table/var_DEGAnalysis.rds"
-
-  if (!is.null(upstream_deg)) {
-    opt$deg_table <- upstream_deg
-    message("Using upstream DEG table: ", opt$deg_table)
-  } else if (file.exists(demo_deg)) {
-    opt$deg_table <- demo_deg
-    message("No DEG file uploaded. Using example data asset.")
-  } else {
-    stop(
-      "ERROR: No CSV file matching the DEG regex was received from the upstream capsule.\n",
-      "Visible files under /data:\n",
-      paste(
-        list.files("/data", recursive = TRUE, full.names = TRUE),
-        collapse = "\n"
-      )
-    )
-  }
-}
-
-resolve_gene_names_column <- function(path, requested) {
-  if (!is.null(requested) && nzchar(requested) && tolower(requested) != "auto") {
-    return(requested)
-  }
-
-  extension <- tolower(tools::file_ext(path))
-  available_columns <- if (extension == "rds") {
-    object <- readRDS(path)
-    if (is.data.frame(object)) {
-      names(object)
-    } else if (is.list(object)) {
-      data_frames <- Filter(is.data.frame, object)
-      if (length(data_frames) == 0L) {
-        stop("ERROR: DEG RDS does not contain a data frame: ", path)
-      }
-      names(data_frames[[1L]])
-    } else {
-      stop("ERROR: DEG RDS does not contain a data frame: ", path)
-    }
-  } else if (extension == "csv") {
-    names(read.csv(path, nrows = 0L, check.names = FALSE))
-  } else if (extension %in% c("tsv", "txt")) {
-    names(read.delim(path, nrows = 0L, check.names = FALSE))
-  } else {
-    stop("ERROR: Unsupported DEG table format: ", path)
-  }
-
-  candidates <- c("GeneName", "Gene Symbols", "Gene", "gene_name", "GeneSymbol", "gene_symbol")
-  detected <- candidates[candidates %in% available_columns]
-  if (length(detected) == 0L) {
-    stop(
-      "ERROR: Could not auto-detect the gene-name column. ",
-      "Specify the Gene Names Column. Available columns: ",
-      paste(available_columns, collapse = ", ")
-    )
-  }
-
-  message("Auto-detected gene-name column: ", detected[[1L]])
-  detected[[1L]]
-}
-
-opt$gene_names_column <- resolve_gene_names_column(opt$deg_table, opt$gene_names_column)
-
-# Parse comma-separated collections
-collections <- trimws(strsplit(opt$collections, ",")[[1]])
+collections <- trimws(strsplit(opt$collections, ",", fixed = TRUE)[[1L]])
 contrasts <- if (is.null(opt$contrasts) || !nzchar(trimws(opt$contrasts))) {
-  character(0)
+  character()
 } else {
   trimws(strsplit(opt$contrasts, ",", fixed = TRUE)[[1L]])
 }
 if (anyDuplicated(contrasts)) {
-  stop("ERROR: Contrasts must not contain duplicates.")
+  stop("ERROR: Contrasts must not contain duplicates.", call. = FALSE)
 }
 
-# Convert string booleans
-collapse_redundancy <- tolower(opt$collapse_redundancy) == "true"
+opt$deg_table <- resolve_gsea_deg_input(opt$deg_table)
+deg_table <- read_gsea_deg_table(opt$deg_table)
+requested_gene_column <- if (
+  !is.null(opt$gene_names_column) && tolower(opt$gene_names_column) == "auto"
+) {
+  NULL
+} else {
+  opt$gene_names_column
+}
+findmarkers_profile <- OmixPathwayInputs::normalize_findmarkers_deg_input(
+  deg_table,
+  gene_column = requested_gene_column,
+  comparison_labels = contrasts
+)
 
-# Results directory
+if (!is.null(findmarkers_profile)) {
+  deg_table <- findmarkers_profile$data
+  opt$gene_names_column <- findmarkers_profile$gene_column
+  contrasts <- findmarkers_profile$comparisons
+  # The App Panel supplies _tstat by default. Standard FindMarkers tables
+  # provide signed log-fold changes rather than t statistics.
+  if (identical(opt$gene_scores_suffix, "_tstat")) {
+    opt$gene_scores_suffix <- "_logFC"
+  }
+  message(
+    "Recognized Seurat FindMarkers input; using signed log-fold-change scores ",
+    "for contrasts: ", paste(contrasts, collapse = ", ")
+  )
+} else {
+  opt$gene_names_column <- resolve_gsea_gene_names_column(
+    deg_table,
+    opt$gene_names_column
+  )
+}
+
+collapse_redundancy <- tolower(opt$collapse_redundancy) == "true"
 results_dir <- "/results"
 dir.create(results_dir, showWarnings = FALSE, recursive = TRUE)
 
@@ -178,15 +117,15 @@ message("========================================")
 message("DEG Table: ", opt$deg_table)
 message("Pathways Database: ", opt$pathways_database)
 message("Species: ", opt$species)
+message("Gene score suffix: ", opt$gene_scores_suffix)
 message("Collections: ", paste(collections, collapse = ", "))
 if (length(contrasts) > 0L) {
   message("Contrasts (ordered): ", paste(contrasts, collapse = ", "))
 }
 message("========================================\n")
 
-# Run GSEA
 results <- GSEA_Preranked(
-  DEG_Table = opt$deg_table,
+  DEG_Table = deg_table,
   Pathways_Database = opt$pathways_database,
   Gene_Names_Column = opt$gene_names_column,
   species = opt$species,
@@ -208,11 +147,10 @@ results <- GSEA_Preranked(
   Output_Directory = results_dir
 )
 
-# Save results
 output_file <- file.path(results_dir, "gsea_results.csv")
 write.csv(results, output_file, row.names = FALSE)
 
 message("\n========================================")
-message("✓ GSEA analysis complete!")
+message("GSEA analysis complete!")
 message("Results saved to: ", output_file)
 message("========================================")

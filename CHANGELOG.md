@@ -8,6 +8,10 @@ Version numbers correspond to Code Ocean capsule release versions (integers: v1,
 ## [Unreleased]
 
 ### Fixed
+- The platform entry point now discovers the attached MSigDB database instead
+  of relying on one hard-coded asset filename. It prefers the shared
+  compatibility mount and fails clearly when a mount contains multiple
+  candidates.
 - Blank DEG selection now discovers one compatible attached table or a
   connected workflow result with deg or marker in its filename, including
   Seurat FindMarkers output named deg_gene_expression_markers.csv.

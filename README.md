@@ -20,6 +20,8 @@ deployment adapter.
 
 - The Code Ocean App Panel and capsule entry point.
 - Uploaded and attached DEG-table discovery under `/data`.
+- Attached MSigDB-pathway discovery, preferring the shared compatibility mount
+  `msigdb_1` and falling back to `msigdb` when it has one supported database.
 - Capsule outputs under `/results` and the pinned runtime configuration.
 - Empty file selection resolves one attached table or one appropriately named
   workflow result; recognized Seurat FindMarkers tables are normalized

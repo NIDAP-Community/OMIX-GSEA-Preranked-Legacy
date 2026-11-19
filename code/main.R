@@ -19,7 +19,7 @@ if (!requireNamespace("OmixPathwayInputs", quietly = TRUE)) {
 
 option_list <- list(
   make_option("--deg_table", type = "character", default = NULL, help = "Path to DEG table (TSV/CSV/RDS)"),
-  make_option("--pathways_database", type = "character", default = "/data/msigdb_1/var_GSEA_MSigDB_v2023_2_CCBR_.rds", help = "Path to pathways database (TSV/CSV/RDS)"),
+  make_option("--pathways_database", type = "character", default = NULL, help = "Optional path to pathways database; blank discovers the attached MSigDB asset"),
   make_option("--gene_names_column", type = "character", default = NULL, help = "Gene-symbol column in DEG table; auto-detect when blank"),
   make_option("--species", type = "character", default = "Mouse", help = "Species in DEG table"),
   make_option("--gene_scores_suffix", type = "character", default = "_tstat", help = "Suffix for gene score columns"),
@@ -73,6 +73,7 @@ if (anyDuplicated(contrasts)) {
 }
 
 opt$deg_table <- resolve_gsea_deg_input(opt$deg_table)
+opt$pathways_database <- resolve_gsea_pathways_database(opt$pathways_database)
 deg_table <- read_gsea_deg_table(opt$deg_table)
 requested_gene_column <- if (
   !is.null(opt$gene_names_column) && tolower(opt$gene_names_column) == "auto"

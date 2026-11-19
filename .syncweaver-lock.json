@@ -1,0 +1,13 @@
+{
+  "host": "NIDAP-Community/OMIX-GSEA-Preranked-Legacy",
+  "orchestrator": "NIDAP-Community/syncweaver-orchestrator",
+  "syncweaver_version": "0.1.1-dev",
+  "sources": {
+    "code/modules/OMIX-GSEA-Preranked-Legacy": {
+      "repo_url": "https://github.com/NIDAP-Community/OMIX",
+      "ref": "main",
+      "git_sha": "73914244c96f4d0bec169cffe17354ccb46681fc",
+      "remote_subdir": "modules/OMIX-GSEA-Preranked-Legacy"
+    }
+  }
+}

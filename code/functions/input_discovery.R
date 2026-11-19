@@ -15,8 +15,61 @@ list_supported_deg_tables <- function(path) {
   sort(files[vapply(files, is_supported_deg_table, logical(1))])
 }
 
+is_supported_pathways_database <- function(path) {
+  tolower(tools::file_ext(path)) %in% c("csv", "tsv", "txt", "rds", "rda", "rdata")
+}
+
+list_supported_pathways_databases <- function(path) {
+  if (!dir.exists(path)) {
+    return(character())
+  }
+  files <- list.files(path, recursive = TRUE, full.names = TRUE, all.files = FALSE)
+  sort(files[vapply(files, is_supported_pathways_database, logical(1))])
+}
+
 format_input_candidates <- function(paths) {
   paste(paths, collapse = "\n")
+}
+
+resolve_gsea_pathways_database <- function(
+    pathways_database = NULL,
+    data_root = "/data",
+    mounts = c("msigdb_1", "msigdb")) {
+  if (!is.null(pathways_database) && nzchar(trimws(pathways_database))) {
+    if (!file.exists(pathways_database)) {
+      stop(
+        "ERROR: Pathways database was not found: ", pathways_database,
+        call. = FALSE
+      )
+    }
+    return(pathways_database)
+  }
+
+  for (mount in mounts) {
+    mount_root <- file.path(data_root, mount)
+    candidates <- list_supported_pathways_databases(mount_root)
+
+    if (length(candidates) == 1L) {
+      message("Using attached pathways database: ", candidates[[1L]])
+      return(candidates[[1L]])
+    }
+    if (length(candidates) > 1L) {
+      stop(
+        "ERROR: Multiple pathway database candidates were found under ",
+        mount_root, ":\n",
+        format_input_candidates(candidates),
+        "\nSelect a file explicitly with --pathways_database.",
+        call. = FALSE
+      )
+    }
+  }
+
+  stop(
+    "ERROR: No supported pathways database was found under ", data_root,
+    ". Attach the MSigDB asset with mount name 'msigdb_1' or 'msigdb', ",
+    "or select a file explicitly with --pathways_database.",
+    call. = FALSE
+  )
 }
 
 resolve_gsea_deg_input <- function(deg_table = NULL, data_root = "/data") {

@@ -76,4 +76,36 @@ expect_error(
   "Multiple workflow DEG candidates"
 )
 
+pathway_root <- file.path(fixture_root, "pathway-data")
+preferred_pathway_dir <- file.path(pathway_root, "msigdb_1", "bundle")
+dir.create(preferred_pathway_dir, recursive = TRUE)
+preferred_pathway <- file.path(preferred_pathway_dir, "MSigDB.rds")
+file.create(preferred_pathway)
+expect_identical(
+  suppressMessages(resolve_gsea_pathways_database(data_root = pathway_root)),
+  preferred_pathway,
+  "Expected the compatibility MSigDB mount to take priority."
+)
+
+fallback_pathway_root <- file.path(fixture_root, "fallback-pathway-data")
+fallback_pathway_dir <- file.path(fallback_pathway_root, "msigdb")
+dir.create(fallback_pathway_dir, recursive = TRUE)
+fallback_pathway <- file.path(fallback_pathway_dir, "collections.rds")
+file.create(fallback_pathway)
+expect_identical(
+  suppressMessages(resolve_gsea_pathways_database(data_root = fallback_pathway_root)),
+  fallback_pathway,
+  "Expected the legacy MSigDB mount to be used as a fallback."
+)
+
+ambiguous_pathway_root <- file.path(fixture_root, "ambiguous-pathway-data")
+ambiguous_pathway_dir <- file.path(ambiguous_pathway_root, "msigdb_1")
+dir.create(ambiguous_pathway_dir, recursive = TRUE)
+file.create(file.path(ambiguous_pathway_dir, "first.rds"))
+file.create(file.path(ambiguous_pathway_dir, "second.rds"))
+expect_error(
+  resolve_gsea_pathways_database(data_root = ambiguous_pathway_root),
+  "Multiple pathway database candidates"
+)
+
 cat("GSEA input-discovery checks passed.\n")
